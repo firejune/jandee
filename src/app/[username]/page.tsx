@@ -34,8 +34,10 @@ enum Color {
   '#216e39' = '--color-calendar-graph-day-L4-bg',
 }
 
+const HOST = 'https://jandee.vercel.app' // 'http://localhost:3000'
+
 const Chart = async ({ params, searchParams }: PageProps) => {
-  const { data } = await axios.get<ChartData>(`https://github-contributions.now.sh/api/v1/${params.username}`)
+  const { data } = await axios.get<ChartData>(`${HOST}/api/v1/${params.username}`)
   if (!data) return null
 
   const width = 722
