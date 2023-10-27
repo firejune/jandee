@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 type Contrib = {
   date: string
   count: number
@@ -36,8 +34,19 @@ enum Color {
 
 const HOST = 'https://jandee.vercel.app' // 'http://localhost:3000'
 
+async function getData<T>(url: string): Promise<{ data: T }> {
+  const res = await fetch(url)
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+
+  const data = await res.json()
+  return { data }
+}
+
 const Chart = async ({ params, searchParams }: PageProps) => {
-  const { data } = await axios.get<ChartData>(`${HOST}/api/v1/${params.username}`)
+  const { data } = await getData<ChartData>(`${HOST}/api/v1/${params.username}`)
   if (!data) return null
 
   const width = 722
