@@ -5,7 +5,7 @@ This is a simple project that lets you embed a GitHub user's contribution chart 
 ### How to use this?
 
 1. Create a new Embed block in your Notion doc.
-2. Set the Embed URL to `https://jandee.vercel.app/chart/%USERNAME%` replacing %USERNAME% with your GitHub username.
+2. Set the Embed URL to `https://jandee.vercel.app/%USERNAME%` replacing %USERNAME% with your GitHub username.
 3. Adjust the size of the embed accordingly.
 4. Bask in its glory!
 
