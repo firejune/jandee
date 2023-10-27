@@ -23,10 +23,18 @@ type ChartData = {
 
 type PageProps = {
   params: { username: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams: { scheme: 'light' | 'dark' }
 }
 
-const Chart = async ({ params }: PageProps) => {
+enum Color {
+  '#ebedf0' = '--color-calendar-graph-day-bg',
+  '#9be9a8' = '--color-calendar-graph-day-L1-bg',
+  '#40c463' = '--color-calendar-graph-day-L2-bg',
+  '#30a14e' = '--color-calendar-graph-day-L3-bg',
+  '#216e39' = '--color-calendar-graph-day-L4-bg',
+}
+
+const Chart = async ({ params, searchParams }: PageProps) => {
   const { data } = await axios.get<ChartData>(`https://github-contributions.now.sh/api/v1/${params.username}`)
   if (!data) return null
 
@@ -43,7 +51,13 @@ const Chart = async ({ params }: PageProps) => {
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i]
     months.push(
-      <text key={`month-${i}`} x={`${(width / 11.6) * i - 5}`} y="-7" style={{ fontSize: '0.66em' }}>
+      <text
+        key={`month-${i}`}
+        x={`${(width / 11.6) * i - 5}`}
+        y="-7"
+        fill="var(--color-text-default)"
+        style={{ fontSize: '0.66em' }}
+      >
         {date.toLocaleString('en-US', { month: 'short' })}
       </text>
     )
@@ -77,39 +91,63 @@ const Chart = async ({ params }: PageProps) => {
           const found = mappedContributions[key]
 
           if (typeof found == 'undefined') {
-            return <rect key={`rect-${i}`} width="10" height="10" x="-37" y={13 * i} fill="#ebedf0"></rect>
+            return (
+              <rect
+                key={`rect-${i}`}
+                width="10"
+                height="10"
+                x="-37"
+                y={13 * i}
+                fill="var(--color-calendar-graph-day-bg)"
+              ></rect>
+            )
           }
 
-          return <rect key={`rect-${i}`} width="10" height="10" x="-37" y={13 * i} fill={found.color}></rect>
+          return (
+            <rect
+              key={`rect-${i}`}
+              width="10"
+              height="10"
+              x="-37"
+              y={13 * i}
+              fill={`var(${Color[found.color as keyof typeof Color]})`}
+            ></rect>
+          )
         })}
       </g>
     )
   }
 
   return (
-    <svg width="800" height="112" style={{ background: 'transparent' }}>
+    <svg
+      data-color-mode={searchParams.scheme}
+      width="768"
+      height="112"
+      viewBox="0 0 768 112"
+      style={{ background: 'transparent' }}
+    >
       <g transform="translate(10, 20)">
         <g transform="translate(55, 0)">{[...Array(52)].map((_, i) => renderWeek(i))}</g>
         <g transform="translate(25, 0)">{months}</g>
         <text textAnchor="start" dx="-10" dy="8" style={{ display: 'none' }}>
           Sun
         </text>
-        <text textAnchor="start" dx="-10" dy="22" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="22" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Mon
         </text>
-        <text textAnchor="start" dx="-10" dy="32" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="32" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Tue
         </text>
-        <text textAnchor="start" dx="-10" dy="48" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="48" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Wed
         </text>
-        <text textAnchor="start" dx="-10" dy="57" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="57" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Thu
         </text>
-        <text textAnchor="start" dx="-10" dy="73" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="73" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Fri
         </text>
-        <text textAnchor="start" dx="-10" dy="81" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="81" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Sat
         </text>
       </g>

@@ -1,12 +1,13 @@
-
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background: white;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+    Helvetica Neue, sans-serif;
+  /* background-color: var(--color-bg-default); */
+  color: var(--color-text-default);
   overflow: hidden;
+  text-align: center;
 }
 
 a {
@@ -18,10 +19,49 @@ a {
   box-sizing: border-box;
 }
 
-:root, [data-color-mode="light"] {
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+svg[data-color-mode='light'] {
+  --color-text-default: #1f2328;
+  --color-bg-default: #ffffff;
   --color-calendar-graph-day-bg: #ebedf0;
   --color-calendar-graph-day-L1-bg: #9be9a8;
   --color-calendar-graph-day-L2-bg: #40c463;
   --color-calendar-graph-day-L3-bg: #30a14e;
   --color-calendar-graph-day-L4-bg: #216e39;
+}
+
+svg[data-color-mode='dark'] {
+  --color-text-default: #e6edf3;
+  --color-bg-default: #0d1117;
+  --color-calendar-graph-day-bg: #161b22;
+  --color-calendar-graph-day-L1-bg: #0e4429;
+  --color-calendar-graph-day-L2-bg: #006d32;
+  --color-calendar-graph-day-L3-bg: #26a641;
+  --color-calendar-graph-day-L4-bg: #39d353;
+}
+
+:root {
+  --color-text-default: #1f2328;
+  --color-bg-default: #ffffff;
+  --color-calendar-graph-day-bg: #ebedf0;
+  --color-calendar-graph-day-L1-bg: #9be9a8;
+  --color-calendar-graph-day-L2-bg: #40c463;
+  --color-calendar-graph-day-L3-bg: #30a14e;
+  --color-calendar-graph-day-L4-bg: #216e39;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-default: #e6edf3;
+    --color-bg-default: #0d1117;
+    --color-calendar-graph-day-bg: #161b22;
+    --color-calendar-graph-day-L1-bg: #0e4429;
+    --color-calendar-graph-day-L2-bg: #006d32;
+    --color-calendar-graph-day-L3-bg: #26a641;
+    --color-calendar-graph-day-L4-bg: #39d353;
+  }
 }
