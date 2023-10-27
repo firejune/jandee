@@ -39,21 +39,23 @@ const Chart = async ({ params, searchParams }: PageProps) => {
   if (!data) return null
 
   const width = 722
-  const dates = []
   const current = new Date()
+  const dates = []
   for (let i = 0; i < 12; i++) {
     current.setDate(-current.getDate())
     dates.push(new Date(current.getTime()))
   }
   dates.reverse()
+  dates.push(new Date())
 
   const months = []
   for (let i = 0; i < dates.length; i++) {
+    if (!i) continue
     const date = dates[i]
     months.push(
       <text
         key={`month-${i}`}
-        x={`${(width / 11.6) * i - 5}`}
+        x={`${(width / 11.6) * (i - 1) - 5}`}
         y="-7"
         fill="var(--color-text-default)"
         style={{ fontSize: '0.66em' }}
@@ -75,22 +77,21 @@ const Chart = async ({ params, searchParams }: PageProps) => {
   }
 
   const now = new Date()
-  now.setDate(-now.getDate())
+  const offset = now.getTimezoneOffset() * 60 * 1000
 
   function renderWeek(week: number) {
-    const rel = new Date(now.getTime())
-    rel.setDate(-(52 * 7) + (week + 4) * 7)
+    const rel = new Date(now.getTime() - offset)
+    rel.setDate(-(53 * 7) + (week + 4) * 7)
 
     return (
       <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
-        {[...Array(7)].map((_, i) => {
+        {Array.from({ length: 7 }).map((_, i) => {
           const relDay = new Date(rel.getTime())
-          relDay.setDate(rel.getDate() - 1 + i)
+          relDay.setDate(rel.getDate() + 1 + i)
 
           const key = relDay.toISOString().split('T')[0]
           const found = mappedContributions[key]
-
-          if (typeof found == 'undefined') {
+          if (!found) {
             return (
               <rect
                 key={`rect-${i}`}
@@ -99,7 +100,9 @@ const Chart = async ({ params, searchParams }: PageProps) => {
                 x="-37"
                 y={13 * i}
                 fill="var(--color-calendar-graph-day-bg)"
-              ></rect>
+              >
+                <title>{key}</title>
+              </rect>
             )
           }
 
@@ -111,7 +114,9 @@ const Chart = async ({ params, searchParams }: PageProps) => {
               x="-37"
               y={13 * i}
               fill={`var(${Color[found.color as keyof typeof Color]})`}
-            ></rect>
+            >
+              <title>{key}</title>
+            </rect>
           )
         })}
       </g>
@@ -127,7 +132,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
       style={{ background: 'transparent' }}
     >
       <g transform="translate(10, 20)">
-        <g transform="translate(55, 0)">{[...Array(52)].map((_, i) => renderWeek(i))}</g>
+        <g transform="translate(55, 0)">{[...Array(53)].map((_, i) => renderWeek(i))}</g>
         <g transform="translate(25, 0)">{months}</g>
         <text textAnchor="start" dx="-10" dy="8" style={{ display: 'none' }}>
           Sun
