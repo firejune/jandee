@@ -37,7 +37,7 @@ svg[data-color-mode='light'] {
 svg[data-color-mode='dark'] {
   --color-text-default: rgba(255, 255, 255, 0.443);
   --color-bg-default: #0d1117;
-  --color-calendar-graph-day-bg: #161b22;
+  --color-calendar-graph-day-bg: #1e2523;
   --color-calendar-graph-day-L1-bg: #0e4429;
   --color-calendar-graph-day-L2-bg: #006d32;
   --color-calendar-graph-day-L3-bg: #26a641;
@@ -58,7 +58,7 @@ svg[data-color-mode='dark'] {
   :root {
     --color-text-default: rgba(255, 255, 255, 0.443);
     --color-bg-default: #0d1117;
-    --color-calendar-graph-day-bg: #161b22;
+    --color-calendar-graph-day-bg: #1e2523;
     --color-calendar-graph-day-L1-bg: #0e4429;
     --color-calendar-graph-day-L2-bg: #006d32;
     --color-calendar-graph-day-L3-bg: #26a641;
