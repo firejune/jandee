@@ -2,7 +2,11 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "https://github.com/bizarre/notion-github-embed"
+      "destination": "https://github.com/firejune/notion-github-embed"
     }
-  ]
+  ],
+  "github": {
+    "enabled": false,
+    "silent": true
+  }
 }
