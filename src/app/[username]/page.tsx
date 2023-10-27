@@ -138,32 +138,32 @@ const Chart = async ({ params, searchParams }: PageProps) => {
     <svg
       data-color-mode={searchParams.scheme}
       width="768"
-      height="112"
-      viewBox="0 0 768 112"
+      height="120"
+      viewBox="0 0 768 120"
       style={{ background: 'transparent' }}
     >
       <g transform="translate(10, 20)">
-        <g transform="translate(55, 0)">{[...Array(53)].map((_, i) => renderWeek(i))}</g>
+        <g transform="translate(55, 5)">{[...Array(53)].map((_, i) => renderWeek(i))}</g>
         <g transform="translate(25, 0)">{months}</g>
-        <text textAnchor="start" dx="-10" dy="8" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="13" style={{ display: 'none' }}>
           Sun
         </text>
-        <text textAnchor="start" dx="-10" dy="22" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="26" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Mon
         </text>
-        <text textAnchor="start" dx="-10" dy="32" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="36" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Tue
         </text>
-        <text textAnchor="start" dx="-10" dy="48" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="52" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Wed
         </text>
-        <text textAnchor="start" dx="-10" dy="57" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="62" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Thu
         </text>
-        <text textAnchor="start" dx="-10" dy="73" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-10" dy="78" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Fri
         </text>
-        <text textAnchor="start" dx="-10" dy="81" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-10" dy="86" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Sat
         </text>
       </g>
