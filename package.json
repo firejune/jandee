@@ -9,13 +9,15 @@
   },
   "dependencies": {
     "axios": "^1.6.0",
-    "date-fns": "^2.30.0",
+    "cheerio": "^1.0.0-rc.12",
+    "lodash": "^4.17.21",
     "next": "14.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.15",
+    "@types/lodash": "^4.14.200",
     "@types/node": "^20.8.9",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
