@@ -25,7 +25,7 @@ svg {
 }
 
 
-:root {
+:root, svg[data-color-mode='light'] {
   /* --color-text-default: rgba(128, 128, 128, 0.8); */
   --color-bg-default: #ffffff;
   --color-calendar-graph-day-bg: #ebedf0;
@@ -39,20 +39,12 @@ svg {
   :root {
     /* --color-bg-default: #0d1117; */
     --color-bg-default: #191919;
-    --color-calendar-graph-day-bg: #1e2523;
-    --color-calendar-graph-day-L1-bg: #0e4429;
-    --color-calendar-graph-day-L2-bg: #006d32;
-    --color-calendar-graph-day-L3-bg: #26a641;
+    --color-calendar-graph-day-bg: rgba(31, 49, 44, 0.47); /* #1e2523; */
+    --color-calendar-graph-day-L1-bg: rgba(10, 84, 47, 0.67); /* #0e4429; */
+    --color-calendar-graph-day-L2-bg: rgba(6, 144, 44, 0.74); /* #006d32; */
+    --color-calendar-graph-day-L3-bg: rgba(0, 174, 63, 0.86); /* #26a641; */
     --color-calendar-graph-day-L4-bg: #39d353;
   }
-}
-
-svg[data-color-mode='light'] {
-  --color-calendar-graph-day-bg: #ebedf0;
-  --color-calendar-graph-day-L1-bg: #9be9a8;
-  --color-calendar-graph-day-L2-bg: #40c463;
-  --color-calendar-graph-day-L3-bg: #30a14e;
-  --color-calendar-graph-day-L4-bg: #216e39;
 }
 
 svg[data-color-mode='dark'] {
