@@ -110,6 +110,8 @@ const Chart = async ({ params, searchParams }: PageProps) => {
                 height="10"
                 x="-37"
                 y={13 * i}
+                rx="2"
+                ry="2"
                 fill="var(--color-calendar-graph-day-bg)"
               >
                 <title>{key}</title>
@@ -124,6 +126,8 @@ const Chart = async ({ params, searchParams }: PageProps) => {
               height="10"
               x="-37"
               y={13 * i}
+              rx="2"
+              ry="2"
               fill={`var(${Color[found.color as keyof typeof Color]})`}
             >
               <title>{key}</title>
