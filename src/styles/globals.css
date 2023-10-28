@@ -4,7 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
     Helvetica Neue, sans-serif;
-  /* background-color: var(--color-bg-default); */
+  background-color: var(--color-bg-default);
   color: var(--color-text-default);
   overflow: hidden;
   text-align: center;
@@ -37,7 +37,8 @@ svg {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg-default: #0d1117;
+    /* --color-bg-default: #0d1117; */
+    --color-bg-default: #191919;
     --color-calendar-graph-day-bg: #1e2523;
     --color-calendar-graph-day-L1-bg: #0e4429;
     --color-calendar-graph-day-L2-bg: #006d32;
@@ -47,7 +48,6 @@ svg {
 }
 
 svg[data-color-mode='light'] {
-  --color-bg-default: #ffffff;
   --color-calendar-graph-day-bg: #ebedf0;
   --color-calendar-graph-day-L1-bg: #9be9a8;
   --color-calendar-graph-day-L2-bg: #40c463;
@@ -56,10 +56,9 @@ svg[data-color-mode='light'] {
 }
 
 svg[data-color-mode='dark'] {
-  --color-bg-default: #0d1117;
-  --color-calendar-graph-day-bg: #1e2523;
-  --color-calendar-graph-day-L1-bg: #0e4429;
-  --color-calendar-graph-day-L2-bg: #006d32;
-  --color-calendar-graph-day-L3-bg: #26a641;
+  --color-calendar-graph-day-bg: rgba(31, 49, 44, 0.47); /* #1e2523; */
+  --color-calendar-graph-day-L1-bg: rgba(10, 84, 47, 0.67); /* #0e4429; */
+  --color-calendar-graph-day-L2-bg: rgba(6, 144, 44, 0.74); /* #006d32; */
+  --color-calendar-graph-day-L3-bg: rgba(0, 174, 63, 0.86); /* #26a641; */
   --color-calendar-graph-day-L4-bg: #39d353;
 }
