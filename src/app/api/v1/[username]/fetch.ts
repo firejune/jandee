@@ -1,4 +1,4 @@
-import cheerio, { Element } from 'cheerio'
+import { load, Element } from 'cheerio'
 import _ from 'lodash'
 
 const COLOR_MAP = {
@@ -11,7 +11,7 @@ const COLOR_MAP = {
 
 async function fetchYears(username: string) {
   const data = await fetch(`https://github.com/${username}`)
-  const $ = cheerio.load(await data.text())
+  const $ = load(await data.text())
   return $('.js-year-link')
     .get()
     .map(a => {
@@ -32,7 +32,7 @@ type Contrib = {
 
 async function fetchDataForYear(url: string | undefined, year: string, format?: string) {
   const data = await fetch(`https://github.com${url}`)
-  const $ = cheerio.load(await data.text())
+  const $ = load(await data.text())
   const $days = $('table.ContributionCalendar-grid td.ContributionCalendar-day')
   const contribText = $('.js-yearly-contributions h2')
     .text()
