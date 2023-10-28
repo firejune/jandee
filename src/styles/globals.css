@@ -28,6 +28,7 @@ svg {
 :root, svg[data-color-mode='light'] {
   /* --color-text-default: rgba(128, 128, 128, 0.8); */
   --color-bg-default: #ffffff;
+  --color-text-default: rgba(128, 128, 128, 0.8);
   --color-calendar-graph-day-bg: #ebedf0;
   --color-calendar-graph-day-L1-bg: #9be9a8;
   --color-calendar-graph-day-L2-bg: #40c463;
