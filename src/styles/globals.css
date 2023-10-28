@@ -26,7 +26,7 @@ svg {
 
 
 :root {
-  --color-text-default: rgba(128, 128, 128, 0.8);
+  /* --color-text-default: rgba(128, 128, 128, 0.8); */
   --color-bg-default: #ffffff;
   --color-calendar-graph-day-bg: #ebedf0;
   --color-calendar-graph-day-L1-bg: #9be9a8;
