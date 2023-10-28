@@ -66,7 +66,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
     months.push(
       <text
         key={`month-${i}`}
-        x={`${(width / 11.6) * (i - 1) - 5}`}
+        x={`${(width / 11.59) * (i - 1) - 5}`}
         y="-7"
         fill="var(--color-text-default)"
         style={{ fontSize: '0.66em' }}
@@ -143,27 +143,27 @@ const Chart = async ({ params, searchParams }: PageProps) => {
       style={{ background: 'transparent' }}
     >
       <g transform="translate(10, 20)">
-        <g transform="translate(55, 5)">{[...Array(53)].map((_, i) => renderWeek(i))}</g>
-        <g transform="translate(25, 0)">{months}</g>
-        <text textAnchor="start" dx="-10" dy="13" style={{ display: 'none' }}>
+        <g transform="translate(56, 0)">{[...Array(53)].map((_, i) => renderWeek(i))}</g>
+        <g transform="translate(23, 0)">{months}</g>
+        <text textAnchor="start" dx="-9" dy="8" style={{ display: 'none' }}>
           Sun
         </text>
-        <text textAnchor="start" dx="-10" dy="26" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-9" dy="22" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Mon
         </text>
-        <text textAnchor="start" dx="-10" dy="36" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-9" dy="32" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Tue
         </text>
-        <text textAnchor="start" dx="-10" dy="52" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-9" dy="48" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Wed
         </text>
-        <text textAnchor="start" dx="-10" dy="62" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-9" dy="62" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Thu
         </text>
-        <text textAnchor="start" dx="-10" dy="78" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
+        <text textAnchor="start" dx="-9" dy="73" fill="var(--color-text-default)" style={{ fontSize: '0.66em' }}>
           Fri
         </text>
-        <text textAnchor="start" dx="-10" dy="86" fill="var(--color-text-default)" style={{ display: 'none' }}>
+        <text textAnchor="start" dx="-9" dy="81" fill="var(--color-text-default)" style={{ display: 'none' }}>
           Sat
         </text>
       </g>
