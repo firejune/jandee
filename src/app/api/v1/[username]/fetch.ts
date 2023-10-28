@@ -54,10 +54,11 @@ async function fetchDataForYear(url: string | undefined, year: string, format?: 
     contributions: (() => {
       const parseDay = (day: Element) => {
         const $day = $(day)
-        const date = ($day.attr('data-date') as string).split('-').map(d => parseInt(d, 10))
+        const dateAttr = $day.attr('data-date') as string
+        const date = dateAttr.split('-').map(d => parseInt(d, 10))
         const color = COLOR_MAP[$day.attr('data-level') as keyof typeof COLOR_MAP] as string
         const value = {
-          date: $day.attr('data-date') as string,
+          date: dateAttr,
           count: parseInt($day.text().split(' ')[0], 10) || 0,
           color,
           intensity: $day.attr('data-level') || 0,

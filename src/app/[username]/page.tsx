@@ -67,7 +67,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
       <text
         key={`month-${i}`}
         x={`${(width / 11.59) * (i - 1) - 5}`}
-        y="-7"
+        y="-6"
         fill="var(--color-text-default)"
         style={{ fontSize: '0.66em' }}
       >
@@ -88,10 +88,10 @@ const Chart = async ({ params, searchParams }: PageProps) => {
   }
 
   const now = new Date()
-  const offset = now.getTimezoneOffset() * 60 * 1000
+  // const offset = now.getTimezoneOffset() * 60 * 1000
 
   function renderWeek(week: number) {
-    const rel = new Date(now.getTime() - offset)
+    const rel = new Date(now.getTime())
     rel.setDate(-(53 * 7) + (week + 4) * 7)
 
     return (
@@ -99,6 +99,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
         {Array.from({ length: 7 }).map((_, i) => {
           const relDay = new Date(rel.getTime())
           relDay.setDate(rel.getDate() + 1 + i)
+          // console.log(i, relDay.getDay())
 
           const key = relDay.toISOString().split('T')[0]
           const found = mappedContributions[key]
