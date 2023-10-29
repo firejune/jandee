@@ -61,8 +61,8 @@ svg[data-color-mode='light'] {
 
 svg[data-color-mode='dark'] {
   --color-calendar-graph-day-bg: rgba(32, 128, 48, 0.1); /* #1e2523; */
-  --color-calendar-graph-day-L1-bg: rgba(90, 211, 110, 0.3); /* #0e4429; */
-  --color-calendar-graph-day-L2-bg: rgba(69, 211, 92, 0.55); /* #006d32; */
-  --color-calendar-graph-day-L3-bg: rgba(65, 211, 91, 0.8); /* #26a641; */
+  --color-calendar-graph-day-L1-bg: #0e4429;
+  --color-calendar-graph-day-L2-bg: #006d32;
+  --color-calendar-graph-day-L3-bg: #26a641;
   --color-calendar-graph-day-L4-bg: #39d353;
 }
