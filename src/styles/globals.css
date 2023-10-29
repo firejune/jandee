@@ -27,7 +27,7 @@ svg {
 :root,
 svg[data-color-mode='light'] {
   /* --color-text-default: rgba(128, 128, 128, 0.8); */
-  --color-bg-default: #ffffff;
+  --color-bg-default: #fff;
   --color-text-default: rgba(128, 128, 128, 0.8);
   --color-calendar-graph-day-bg: #ebedf0;
   --color-calendar-graph-day-L1-bg: #9be9a8;
@@ -46,8 +46,8 @@ svg[data-color-mode='light'] {
     /* --color-bg-default: #0d1117; */
     --color-bg-default: #191919;
     --color-calendar-graph-day-bg: rgba(128, 128, 128, 0.1); /* #1e2523; */
-    --color-calendar-graph-day-L1-bg: rgba(90, 211, 110, 0.3); /* #0e4429; */
-    --color-calendar-graph-day-L2-bg: rgba(69, 211, 92, 0.55); /* #006d32; */
+    --color-calendar-graph-day-L1-bg: rgba(10, 108, 44, 0.4); /* #0e4429; */
+    --color-calendar-graph-day-L2-bg: rgba(29, 160, 51, 0.55); /* #006d32; */
     --color-calendar-graph-day-L3-bg: rgba(65, 211, 91, 0.8); /* #26a641; */
     --color-calendar-graph-day-L4-bg: #39d353;
     --color-calendar-graph-day-border: rgba(27, 31, 35, 0.06);
@@ -55,12 +55,11 @@ svg[data-color-mode='light'] {
     --color-calendar-graph-day-L2-border: rgba(255, 255, 255, 0.05);
     --color-calendar-graph-day-L3-border: rgba(255, 255, 255, 0.05);
     --color-calendar-graph-day-L4-border: rgba(255, 255, 255, 0.05);
-    --color-user-mention-fg: ;
   }
 }
 
 svg[data-color-mode='dark'] {
-  --color-calendar-graph-day-bg: rgba(32, 128, 48, 0.1); /* #1e2523; */
+  --color-calendar-graph-day-bg: #222; /* #1e2523; */
   --color-calendar-graph-day-L1-bg: #0e4429;
   --color-calendar-graph-day-L2-bg: #006d32;
   --color-calendar-graph-day-L3-bg: #26a641;
