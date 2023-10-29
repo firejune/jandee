@@ -25,11 +25,11 @@ type PageProps = {
 }
 
 enum Color {
-  '#ebedf0' = '--color-calendar-graph-day-bg',
-  '#9be9a8' = '--color-calendar-graph-day-L1-bg',
-  '#40c463' = '--color-calendar-graph-day-L2-bg',
-  '#30a14e' = '--color-calendar-graph-day-L3-bg',
-  '#216e39' = '--color-calendar-graph-day-L4-bg',
+  '#ebedf0' = '--color-calendar-graph-day',
+  '#9be9a8' = '--color-calendar-graph-day-L1',
+  '#40c463' = '--color-calendar-graph-day-L2',
+  '#30a14e' = '--color-calendar-graph-day-L3',
+  '#216e39' = '--color-calendar-graph-day-L4',
 }
 
 const HOST = 'https://jandee.vercel.app' // 'http://localhost:3000'
@@ -49,7 +49,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
   const { data } = await getData<ChartData>(`${HOST}/api/v1/${params.username}`)
   if (!data) return null
 
-  const width = 722
+  const width = 768
   const current = new Date()
   const dates = []
   for (let i = 0; i < 12; i++) {
@@ -66,7 +66,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
     months.push(
       <text
         key={`month-${i}`}
-        x={`${(width / 11.59) * (i - 1) - 5}`}
+        x={`${(width / 12.1) * (i - 1) - 5}`}
         y="-6"
         fill="var(--color-text-default)"
         style={{ fontSize: '0.66em' }}
@@ -114,6 +114,7 @@ const Chart = async ({ params, searchParams }: PageProps) => {
                 rx="2"
                 ry="2"
                 fill="var(--color-calendar-graph-day-bg)"
+                stroke="var(--color-calendar-graph-day-border)"
               >
                 <title>{key}</title>
               </rect>
@@ -129,7 +130,8 @@ const Chart = async ({ params, searchParams }: PageProps) => {
               y={13 * i}
               rx="2"
               ry="2"
-              fill={`var(${Color[found.color as keyof typeof Color]})`}
+              fill={`var(${Color[found.color as keyof typeof Color]}-bg)`}
+              stroke={`var(${Color[found.color as keyof typeof Color]}-border)`}
             >
               <title>{key}</title>
             </rect>
