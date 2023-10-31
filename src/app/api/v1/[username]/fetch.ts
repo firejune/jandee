@@ -1,5 +1,4 @@
 import { load, Element } from 'cheerio'
-import _ from 'lodash'
 
 async function fetchYears(username: string) {
   const data = await fetch(`https://github.com/${username}`)
@@ -9,7 +8,7 @@ async function fetchYears(username: string) {
     .map(a => {
       const $a = $(a)
       return {
-        href: $a.attr('href'),
+        href: $a.attr('href') as string,
         text: $a.text().trim(),
       }
     })
@@ -19,10 +18,10 @@ type Contrib = {
   date: string
   count: number
   level: string
-  intensity: string | number
+  intensity: string
 }
 
-async function fetchDataForYear(url: string | undefined, year: string, format?: string) {
+async function fetchDataForYear(url: string, year: string, format?: string) {
   const data = await fetch(`https://github.com${url}`)
   const $ = load(await data.text())
   const $days = $('table.ContributionCalendar-grid td.ContributionCalendar-day')
@@ -40,8 +39,8 @@ async function fetchDataForYear(url: string | undefined, year: string, format?: 
     year,
     total: contribCount || 0,
     range: {
-      start: $($days.get(0)).attr('data-date'),
-      end: $($days.get($days.length - 1)).attr('data-date'),
+      start: $($days.get(0)).attr('data-date') as string,
+      end: $($days.get($days.length - 1)).attr('data-date') as string,
     },
     contributions: (() => {
       const parseDay = (day: Element) => {
@@ -53,7 +52,7 @@ async function fetchDataForYear(url: string | undefined, year: string, format?: 
           date: dateAttr,
           count: parseInt($day.text().split(' ')[0], 10) || 0,
           level,
-          intensity: $day.attr('data-level') || 0,
+          intensity: $day.attr('data-level') || '0',
         }
         return { date, value }
       }
@@ -62,13 +61,13 @@ async function fetchDataForYear(url: string | undefined, year: string, format?: 
         return $days.get().map(day => parseDay(day).value)
       }
 
-      return $days.get().reduce((o, day) => {
-        const { date, value } = parseDay(day)
+      return $days.get().reduce((acc, cur) => {
+        const { date, value } = parseDay(cur)
         const [y, m, d] = date
-        if (!o[y]) o[y] = {}
-        if (!o[y][m]) o[y][m] = {}
-        o[y][m][d] = value
-        return o
+        if (!acc[y]) acc[y] = {}
+        if (!acc[y][m]) acc[y][m] = {}
+        acc[y][m][d] = value
+        return acc
       }, {} as Record<number, Record<number, Record<number, Contrib>>>)
     })(),
   }
@@ -79,19 +78,19 @@ export async function fetchDataForAllYears(username: string, format?: string) {
   return Promise.all(years.map(year => fetchDataForYear(year.href, year.text, format))).then(resp => {
     return {
       years: (() => {
-        const obj = {}
+        const obj = {} as Record<string, object>
         const arr = resp.map(year => {
           const { contributions, ...rest } = year
-          _.setWith(obj, [rest.year], rest, Object)
+          obj[rest.year] = rest
           return rest
         })
         return format === 'nested' ? obj : arr
       })(),
       contributions:
         format === 'nested'
-          ? resp.reduce((acc, curr) => _.merge(acc, curr.contributions))
+          ? resp.reduce((acc, cur) => Object.assign(acc, cur.contributions))
           : resp
-              .reduce((list, curr) => [...list, ...(curr.contributions as Contrib[])], [] as Contrib[])
+              .reduce((list, cur) => [...list, ...(cur.contributions as Contrib[])], [] as Contrib[])
               .sort((a, b) => {
                 if (a.date < b.date) return 1
                 else if (a.date > b.date) return -1

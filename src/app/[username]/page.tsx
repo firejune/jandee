@@ -10,8 +10,7 @@ type PageProps = {
 export default async function ChartPage({ params, searchParams }: PageProps) {
   const token = `${Date.now()}`.substring(0, 9)
   const { data } = await getData<ChartData>(`${HOST}/api/v1/${params.username}?v=${token}`)
-  if (!data) return
-  return (
+  return data && (
     <Chart data={data} scheme={searchParams.scheme} />
   )
 }
