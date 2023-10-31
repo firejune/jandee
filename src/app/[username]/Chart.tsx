@@ -61,18 +61,15 @@ const Chart = ({ data, scheme }: ChartProps) => {
           {[...Array(53)].map((_, week) => {
             const rel = new Date(now.getTime())
             rel.setDate(-(52 * 7) + (week + 4) * 7)
-
             return (
               <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
                 {Array.from({ length: 7 }).map((_, i) => {
                   const relDay = new Date(rel.getTime())
                   relDay.setDate(rel.getDate() + 1 + i)
-
                   const key = relDay.toISOString().split('T')[0]
                   const found = mappedContributions[key]
                   const fill = !found || found.level === '0' ? 'bg' : `L${found.level}-bg`
                   const stroke = !found || found.level === '0' ? 'border' : `L${found.level}-border`
-
                   return (
                     <rect
                       key={`rect-${i}`}
@@ -85,7 +82,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
                       fill={`var(--color-calendar-graph-day-${fill})`}
                       stroke={`var(--color-calendar-graph-day-${stroke})`}
                     >
-                      <title>{key}</title>
+                      <title>{key} / {found?.count || 0}</title>
                     </rect>
                   )
                 })}
@@ -93,6 +90,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
             )
           })}
         </g>
+
         <g transform="translate(23, 0)">
           {dates.map((date, i) => i && (
             <text
@@ -106,6 +104,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
             </text>
           ))}
         </g>
+
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
           <text
             key={i}
