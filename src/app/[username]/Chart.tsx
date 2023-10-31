@@ -82,7 +82,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
                       fill={`var(--color-calendar-graph-day-${fill})`}
                       stroke={`var(--color-calendar-graph-day-${stroke})`}
                     >
-                      <title>{key} / {found?.count || 0}</title>
+                      <title>{`${key} / ${found?.count || '0'}`}</title>
                     </rect>
                   )
                 })}
