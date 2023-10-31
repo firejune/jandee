@@ -107,7 +107,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
 
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
           <text
-            key={i}
+            key={`day-${i}`}
             textAnchor="start"
             dx="-9"
             dy={(8 + (i * 13))}
