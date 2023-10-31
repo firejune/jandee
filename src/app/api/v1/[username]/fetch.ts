@@ -1,14 +1,6 @@
 import { load, Element } from 'cheerio'
 import _ from 'lodash'
 
-const COLOR_MAP = {
-  '0': '#ebedf0',
-  '1': '#9be9a8',
-  '2': '#40c463',
-  '3': '#30a14e',
-  '4': '#216e39',
-}
-
 async function fetchYears(username: string) {
   const data = await fetch(`https://github.com/${username}`)
   const $ = load(await data.text())
@@ -26,7 +18,7 @@ async function fetchYears(username: string) {
 type Contrib = {
   date: string
   count: number
-  color: string
+  level: string
   intensity: string | number
 }
 
@@ -56,11 +48,11 @@ async function fetchDataForYear(url: string | undefined, year: string, format?: 
         const $day = $(day)
         const dateAttr = $day.attr('data-date') as string
         const date = dateAttr.split('-').map(d => parseInt(d, 10))
-        const color = COLOR_MAP[$day.attr('data-level') as keyof typeof COLOR_MAP] as string
+        const level = $day.attr('data-level') as string
         const value = {
           date: dateAttr,
           count: parseInt($day.text().split(' ')[0], 10) || 0,
-          color,
+          level,
           intensity: $day.attr('data-level') || 0,
         }
         return { date, value }
