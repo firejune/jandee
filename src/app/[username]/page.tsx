@@ -1,7 +1,7 @@
 import Chart, { ChartData } from './Chart'
 
-const HOST = 'http://localhost:3000'
-// const HOST = 'https://jandee.vercel.app'
+// const HOST = 'http://localhost:3000'
+const HOST = 'https://jandee.vercel.app'
 
 type PageProps = {
   params: { username: string }
