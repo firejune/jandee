@@ -7,11 +7,11 @@ export type Contrib = {
 }
 
 type ChartProps = {
-  data: Record<string, Contrib>
-  scheme: 'light' | 'dark'
+  data?: Record<string, Contrib>
+  scheme?: 'light' | 'dark'
 }
 
-const Chart = ({ data, scheme }: ChartProps) => {
+const Chart = ({ data = {}, scheme }: ChartProps) => {
   const now = new Date()
   const offset = now.getDay() * (24 * 60 * 60 * 1000)
 
