@@ -62,8 +62,8 @@ const Chart = ({ data, scheme }: ChartProps) => {
                   relDay.setDate(rel.getDate() + 1 + i)
                   const key = relDay.toISOString().split('T')[0]
                   const found = mappedContributions[key]
-                  const fill = !found?.count ? 'bg' : `L${found.level}-bg`
-                  const stroke = !found?.count ? 'border' : `L${found.level}-border`
+                  const fill = found?.count ? `L${found.level}-bg` : 'bg'
+                  const stroke = found?.count ? `L${found.level}-border` : 'border'
                   return (
                     <rect
                       key={`rect-${i}`}

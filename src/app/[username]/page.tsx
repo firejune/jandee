@@ -3,12 +3,13 @@ import Chart, { ChartData } from './Chart'
 const HOST = process.env.API_HOST
 
 type PageProps = {
-  params: { username: string; v: string }
-  searchParams: { scheme: 'light' | 'dark' }
+  params: { username: string  }
+  searchParams: { scheme: 'light' | 'dark'; v: string }
 }
 
 export default async function ChartPage({ params, searchParams }: PageProps) {
-  const { data } = await getData<ChartData>(`${HOST}/api/v1/${params.username}${params.v ? `?v=${params.v}` : ''}`)
+  const token = searchParams.v || `${Date.now()}`.substring(0, 8)
+  const { data } = await getData<ChartData>(`${HOST}/api/v1/${params.username}?v=${token}`)
   return data && <Chart data={data} scheme={searchParams.scheme} />
 }
 
