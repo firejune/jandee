@@ -28,23 +28,21 @@ const Chart = ({ data, scheme }: ChartProps) => {
   const width = 768
   const now = new Date()
   const day = now.getDay()
-  const current = new Date()
   const offset = day * (24 * 60 * 60 * 1000)
 
-  const dates = []
+  const current = new Date(new Date().setMonth(-14))
+  const dates = [new Date(current.getTime())]
   for (let i = 0; i < 11; i++) {
-    current.setDate(-current.getDate() - day)
+    current.setMonth(current.getMonth() + 1)
     dates.push(new Date(current.getTime()))
   }
-  dates.reverse()
-  dates.push(new Date(now.getTime()))
 
   const mappedContributions = {} as Record<string, Contrib>
   const contributions = data.contributions
   for (let i = 0; i < contributions.length; i++) {
     const contrib = contributions[i]
     const dateObj = new Date(contrib.date)
-    if (dateObj < dates[0]) {
+    if (dateObj < current) {
       break
     }
     mappedContributions[contrib.date] = contrib
@@ -64,8 +62,8 @@ const Chart = ({ data, scheme }: ChartProps) => {
                   relDay.setDate(rel.getDate() + 1 + i)
                   const key = relDay.toISOString().split('T')[0]
                   const found = mappedContributions[key]
-                  const fill = !found || found.level === '0' ? 'bg' : `L${found.level}-bg`
-                  const stroke = !found || found.level === '0' ? 'border' : `L${found.level}-border`
+                  const fill = !found?.count ? 'bg' : `L${found.level}-bg`
+                  const stroke = !found?.count ? 'border' : `L${found.level}-border`
                   return (
                     <rect
                       key={`rect-${i}`}
@@ -91,7 +89,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
           {dates.map((date, i) => (
             <text
               key={`month-${i}`}
-              x={`${(width / 12.1) * (i - 1) - 5}`}
+              x={`${(width / 12.1) * i - 5}`}
               y="-6"
               fill="var(--color-text-default)"
               style={{ fontSize: '0.66em' }}
