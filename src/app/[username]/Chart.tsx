@@ -27,21 +27,23 @@ type ChartProps = {
 const Chart = ({ data, scheme }: ChartProps) => {
   const width = 768
   const now = new Date()
+  const day = now.getDay()
   const current = new Date()
+  const offset = day * (24 * 60 * 60 * 1000)
 
   const dates = []
-  for (let i = 0; i < 12; i++) {
-    current.setDate(-current.getDate())
+  for (let i = 0; i < 11; i++) {
+    current.setDate(-current.getDate() - day)
     dates.push(new Date(current.getTime()))
   }
   dates.reverse()
-  dates.push(new Date())
+  dates.push(new Date(now.getTime()))
 
   const mappedContributions = {} as Record<string, Contrib>
   const contributions = data.contributions
   for (let i = 0; i < contributions.length; i++) {
-    let contrib = contributions[i]
-    let dateObj = new Date(contrib.date)
+    const contrib = contributions[i]
+    const dateObj = new Date(contrib.date)
     if (dateObj < dates[0]) {
       break
     }
@@ -49,17 +51,11 @@ const Chart = ({ data, scheme }: ChartProps) => {
   }
 
   return (
-    <svg
-      data-color-mode={scheme}
-      width="768"
-      height="120"
-      viewBox="0 0 768 120"
-      style={{ background: 'transparent' }}
-    >
+    <svg data-color-mode={scheme} width="768" height="120" viewBox="0 0 768 120" style={{ background: 'transparent' }}>
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
           {[...Array(53)].map((_, week) => {
-            const rel = new Date(now.getTime())
+            const rel = new Date(now.getTime() - offset)
             rel.setDate(-(52 * 7) + (week + 4) * 7)
             return (
               <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
@@ -92,7 +88,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
         </g>
 
         <g transform="translate(23, 0)">
-          {dates.map((date, i) => i && (
+          {dates.map((date, i) => (
             <text
               key={`month-${i}`}
               x={`${(width / 12.1) * (i - 1) - 5}`}
@@ -110,9 +106,9 @@ const Chart = ({ data, scheme }: ChartProps) => {
             key={`day-${i}`}
             textAnchor="start"
             dx="-9"
-            dy={(8 + (i * 13))}
+            dy={8 + i * 13}
             fill="var(--color-text-default)"
-            style={i % 2 ? { fontSize: '0.66em' } : { display: 'none' } }
+            style={i % 2 ? { fontSize: '0.66em' } : { display: 'none' }}
           >
             {day}
           </text>
