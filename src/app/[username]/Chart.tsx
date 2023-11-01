@@ -1,50 +1,25 @@
-type Contrib = {
-  date: string
+'use client'
+
+export type Contrib = {
+  date?: string
   count: number
   level: string
-  intensity: string
-}
-
-type Year = {
-  year: string
-  total: number
-  range: {
-    start: string
-    end: string
-  }
-}
-
-export type ChartData = {
-  contributions: Contrib[]
-  years: Year[]
 }
 
 type ChartProps = {
-  data: ChartData
+  data: Record<string, Contrib>
   scheme: 'light' | 'dark'
 }
 
 const Chart = ({ data, scheme }: ChartProps) => {
   const now = new Date()
-  const day = now.getDay()
-  const offset = day * (24 * 60 * 60 * 1000)
+  const offset = now.getDay() * (24 * 60 * 60 * 1000)
 
-  const current = new Date(new Date().setMonth(-14))
+  const current = new Date(new Date().setMonth(now.getMonth() - 12))
   const dates = [new Date(current.getTime())]
   for (let i = 0; i < 11; i++) {
     current.setMonth(current.getMonth() + 1)
     dates.push(new Date(current.getTime()))
-  }
-
-  const mappedContributions = {} as Record<string, Contrib>
-  const contributions = data.contributions
-  for (let i = 0; i < contributions.length; i++) {
-    const contrib = contributions[i]
-    const dateObj = new Date(contrib.date)
-    if (dateObj < current) {
-      break
-    }
-    mappedContributions[contrib.date] = contrib
   }
 
   return (
@@ -60,7 +35,7 @@ const Chart = ({ data, scheme }: ChartProps) => {
                   const relDay = new Date(rel.getTime())
                   relDay.setDate(rel.getDate() + i + 1)
                   const key = relDay.toISOString().split('T')[0]
-                  const found = mappedContributions[key]
+                  const found = data[key]
                   return (
                     <rect
                       key={`rect-${i}`}

@@ -18,7 +18,6 @@ type Contrib = {
   date: string
   count: number
   level: string
-  intensity: string
 }
 
 async function fetchDataForYear(url: string, year: string, format?: string) {
@@ -47,12 +46,10 @@ async function fetchDataForYear(url: string, year: string, format?: string) {
         const $day = $(day)
         const dateAttr = $day.attr('data-date') as string
         const date = dateAttr.split('-').map(d => parseInt(d, 10))
-        const level = $day.attr('data-level') as string
         const value = {
           date: dateAttr,
           count: parseInt($day.text().split(' ')[0], 10) || 0,
-          level,
-          intensity: $day.attr('data-level') || '0',
+          level: $day.attr('data-level') || '0',
         }
         return { date, value }
       }
