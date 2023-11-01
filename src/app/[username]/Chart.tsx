@@ -25,7 +25,6 @@ type ChartProps = {
 }
 
 const Chart = ({ data, scheme }: ChartProps) => {
-  const width = 768
   const now = new Date()
   const day = now.getDay()
   const offset = day * (24 * 60 * 60 * 1000)
@@ -52,18 +51,16 @@ const Chart = ({ data, scheme }: ChartProps) => {
     <svg data-color-mode={scheme} width="768" height="120" viewBox="0 0 768 120" style={{ background: 'transparent' }}>
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
-          {[...Array(53)].map((_, week) => {
+          {Array.from({ length: 53 }).map((_, week) => {
             const rel = new Date(now.getTime() - offset)
             rel.setDate(-(52 * 7) + (week + 4) * 7)
             return (
               <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
                 {Array.from({ length: 7 }).map((_, i) => {
                   const relDay = new Date(rel.getTime())
-                  relDay.setDate(rel.getDate() + 1 + i)
+                  relDay.setDate(rel.getDate() + i + 1)
                   const key = relDay.toISOString().split('T')[0]
                   const found = mappedContributions[key]
-                  const fill = found?.count ? `L${found.level}-bg` : 'bg'
-                  const stroke = found?.count ? `L${found.level}-border` : 'border'
                   return (
                     <rect
                       key={`rect-${i}`}
@@ -73,8 +70,8 @@ const Chart = ({ data, scheme }: ChartProps) => {
                       y={13 * i}
                       rx="2"
                       ry="2"
-                      fill={`var(--color-calendar-graph-day-${fill})`}
-                      stroke={`var(--color-calendar-graph-day-${stroke})`}
+                      fill={`var(--color-calendar-graph-day-${found?.count ? `L${found.level}-bg` : 'bg'})`}
+                      stroke={`var(--color-calendar-graph-day-${found?.count ? `L${found.level}-border` : 'border'})`}
                     >
                       <title>{`${key} / ${found?.count || '0'}`}</title>
                     </rect>
@@ -85,11 +82,11 @@ const Chart = ({ data, scheme }: ChartProps) => {
           })}
         </g>
 
-        <g transform="translate(23, 0)">
+        <g transform="translate(20, 0)">
           {dates.map((date, i) => (
             <text
               key={`month-${i}`}
-              x={`${(width / 12.1) * i - 5}`}
+              x={`${(738 / 12) * i}`}
               y="-6"
               fill="var(--color-text-default)"
               style={{ fontSize: '0.66em' }}
@@ -102,9 +99,8 @@ const Chart = ({ data, scheme }: ChartProps) => {
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
           <text
             key={`day-${i}`}
-            textAnchor="start"
             dx="-9"
-            dy={8 + i * 13}
+            dy={i * 13 + 8}
             fill="var(--color-text-default)"
             style={i % 2 ? { fontSize: '0.66em' } : { display: 'none' }}
           >
