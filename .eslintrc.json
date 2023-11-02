@@ -2,6 +2,9 @@
   "root": true,
   "parser": "@babel/eslint-parser",
   "plugins": ["react", "react-hooks", "import"],
+  "extends": [
+    "next/core-web-vitals"
+  ],
   "env": {
     "browser": true,
     "commonjs": true,
@@ -29,7 +32,6 @@
   "overrides": [
     {
       "extends": [
-        "next/core-web-vitals",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/stylistic"
       ],
@@ -85,7 +87,8 @@
         "no-unused-expressions": "off",
         "no-unused-vars": "off",
         "no-use-before-define": "off",
-        "no-useless-constructor": "off"
+        "no-useless-constructor": "off",
+        "react/react-in-jsx-scope": "off"
       }
     }
   ],

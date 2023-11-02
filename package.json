@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lint": "next lint",
     "build": "next build",
     "start": "next start"
   },
@@ -14,7 +15,9 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.22.15",
+    "@babel/core": "^7.23.2",
+    "@babel/eslint-parser": "^7.22.15",
+    "@next/eslint-plugin-next": "^14.0.1",
     "@types/lodash": "^4.14.200",
     "@types/node": "^20.8.9",
     "@types/react": "^18.2.33",
