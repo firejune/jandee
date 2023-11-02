@@ -8,7 +8,7 @@ import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
 import { themes } from './themes'
 
-interface DataStructYear {
+interface Year {
   year: string;
   total: number;
   range: {
@@ -17,20 +17,20 @@ interface DataStructYear {
   };
 }
 
-interface DataStructContribution {
+interface Contribution {
   date: string;
   count: number;
-  level: number;
+  intensity: number;
 }
 
 export interface DataStruct {
-  years: DataStructYear[];
-  contributions: DataStructContribution[];
+  years: Year[];
+  contributions: Contribution[];
 }
 
 interface GraphEntry {
   date: string;
-  info?: DataStructContribution;
+  info?: Contribution;
 }
 
 interface Options {
@@ -196,7 +196,7 @@ function draw(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
         continue
       }
       // @ts-ignore
-      const color = theme[`grade${day.info.level}`]
+      const color = theme[`grade${day.info.intensity}`]
       ctx.fillStyle = color
       ctx.fillRect(
         offsetX + (boxWidth + boxMargin) * x,

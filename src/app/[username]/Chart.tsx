@@ -7,7 +7,7 @@ import format from 'date-fns/format'
 export type Contrib = {
   date?: string
   count: number
-  level: string
+  intensity: string
 }
 
 type ChartProps = {
@@ -45,8 +45,8 @@ const Chart = ({ data = {}, scheme }: ChartProps) => {
                       y={13 * day}
                       rx="2"
                       ry="2"
-                      fill={`var(--color-calendar-graph-day-${found?.count ? `L${found.level}-bg` : 'bg'})`}
-                      stroke={`var(--color-calendar-graph-day-${found?.count ? `L${found.level}-border` : 'border'})`}
+                      fill={`var(--color-calendar-graph-day-${found?.count ? `L${found.intensity}-bg` : 'bg'})`}
+                      stroke={`var(--color-calendar-graph-day-${found?.count ? `L${found.intensity}-border` : 'border'})`}
                     >
                       <title>{`${key} / ${found?.count || '0'}`}</title>
                     </rect>
