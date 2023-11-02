@@ -1,5 +1,3 @@
-'use client'
-
 export type Contrib = {
   date?: string
   count: number
