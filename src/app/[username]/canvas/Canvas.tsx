@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import { drawContributions, DataStruct } from './lib'
+import { drawContributions, DataStruct } from './draw'
 import { themes } from './themes'
 
 export type { DataStruct }

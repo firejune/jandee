@@ -36,7 +36,6 @@ interface GraphEntry {
 interface Options {
   themeName?: keyof typeof themes;
   customTheme?: Theme;
-  skipHeader?: boolean;
   skipAxisLabel?: boolean;
   username: string;
   data: DataStruct;
@@ -45,14 +44,12 @@ interface Options {
 }
 
 interface DrawYearOptions extends Options {
-  year: DataStructYear;
+  range: {
+    start: string;
+    end: string;
+  };
   offsetX?: number;
   offsetY?: number;
-}
-
-interface DrawMetadataOptions extends Options {
-  width: number;
-  height: number;
 }
 
 interface Theme {
@@ -78,8 +75,7 @@ const boxWidth = 10
 const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
-const headerHeight = 60
-const canvasMargin = 20
+const canvasMargin = 10
 const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
 const scaleFactor = getPixelRatio()
 
@@ -116,9 +112,9 @@ function getContributionCount(graphEntries: GraphEntry[][]) {
   }, 0)
 }
 
-function drawYear(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
+function draw(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   const {
-    year,
+    range,
     offsetX = 0,
     offsetY = 0,
     data,
@@ -126,10 +122,8 @@ function drawYear(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   } = opts
   const theme = getTheme(opts)
 
-  const today = new Date()
-  const thisYear = format(today, 'yyyy')
-  const lastDate = year.year === thisYear ? today : parseISO(year.range.end)
-  const firstRealDate = parseISO(`${year.year}-01-01`)
+  const lastDate = parseISO(range.end)
+  const firstRealDate = parseISO(range.start)
   const firstDate = startOfWeek(firstRealDate)
 
   let nextDate = firstDate
@@ -158,21 +152,40 @@ function drawYear(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
       })
     )
   }
-  if (!opts.skipHeader) {
-    const count = new Intl.NumberFormat().format(
-      getContributionCount(graphEntries)
-    )
 
-    ctx.textBaseline = 'hanging'
-    ctx.fillStyle = theme.text
-    ctx.font = `10px '${fontFace}'`
-    ctx.fillText(
-      `${year.year}: ${count} Contribution${year.total === 1 ? '' : 's'}${
-        thisYear === year.year ? ' (so far)' : ''
-      }`,
-      offsetX,
-      offsetY - 17
+  const count = new Intl.NumberFormat().format(
+    getContributionCount(graphEntries)
+  )
+
+  ctx.textBaseline = 'bottom'
+  ctx.fillStyle = theme.text
+  ctx.font = `10px '${fontFace}'`
+  ctx.fillText(
+    `${count} contribution${count === '1' ? '' : 's'} in the last year from @${opts.username} on GitHub`,
+    canvasMargin,
+    yearHeight + 5
+  )
+
+  // chart legend
+  let themeGrades = 5
+  const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
+  ctx.fillStyle = theme.text
+  ctx.fillText(
+    'Less',
+    width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55,
+    yearHeight + 5
+  )
+  ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
+  for (let x = 0; x < 5; x += 1) {
+    // @ts-ignore
+    ctx.fillStyle = theme[`grade${x}`]
+    ctx.fillRect(
+      width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
+      yearHeight - 5,
+      10,
+      10
     )
+    themeGrades -= 1
   }
 
   for (let y = 0; y < graphEntries.length; y += 1) {
@@ -196,6 +209,7 @@ function drawYear(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
 
   // Draw Month Label
   let lastCountedMonth = 0
+  ctx.textBaseline = 'hanging'
   for (let y = 0; y < graphEntries[0].length; y += 1) {
     const date = parseISO(graphEntries[0][y].date)
     const month = getMonth(date) + 1
@@ -213,81 +227,10 @@ function drawYear(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   }
 }
 
-function drawMetaData(
-  ctx: CanvasRenderingContext2D,
-  opts: DrawMetadataOptions
-) {
-  const {
-    username,
-    width,
-    height,
-    footerText,
-    data,
-    fontFace = defaultFontFace
-  } = opts
-  const theme = getTheme(opts)
-  ctx.fillStyle = theme.background
-  ctx.fillRect(0, 0, width, height)
-
-  if (footerText) {
-    ctx.fillStyle = theme.meta
-    ctx.textBaseline = 'bottom'
-    ctx.font = `10px '${fontFace}'`
-    ctx.fillText(footerText, canvasMargin, height - 5)
-  }
-
-  // chart legend
-  let themeGrades = 5
-  ctx.fillStyle = theme.text
-  ctx.fillText(
-    'Less',
-    width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55,
-    37
-  )
-  ctx.fillText('More', width - canvasMargin - 25, 37)
-  for (let x = 0; x < 5; x += 1) {
-    // @ts-ignore
-    ctx.fillStyle = theme[`grade${x}`]
-    ctx.fillRect(
-      width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
-      textHeight + boxWidth,
-      10,
-      10
-    )
-    themeGrades -= 1
-  }
-
-  ctx.fillStyle = theme.text
-  ctx.textBaseline = 'hanging'
-  ctx.font = `20px '${fontFace}'`
-  ctx.fillText(`@${username} on GitHub`, canvasMargin, canvasMargin)
-
-  let totalContributions = 0
-  for (const year of data.years) {
-    totalContributions += year.total
-  }
-  ctx.font = `10px '${fontFace}'`
-  ctx.fillText(
-    `Total Contributions: ${totalContributions}`,
-    canvasMargin,
-    canvasMargin + 30
-  )
-
-  ctx.beginPath()
-  ctx.moveTo(canvasMargin, 55 + 10)
-  ctx.lineTo(width - canvasMargin, 55 + 10)
-  ctx.strokeStyle = theme.grade0
-  ctx.stroke()
-}
-
 export function drawContributions(canvas: HTMLCanvasElement, opts: Options) {
   const { data } = opts
-  let headerOffset = 0
-  if (!opts.skipHeader) {
-    headerOffset = headerHeight
-  }
-  const height =
-    data.years.length * yearHeight + canvasMargin + headerOffset + 10
+
+  const height = yearHeight + canvasMargin
   const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
 
   canvas.width = width * scaleFactor
@@ -301,24 +244,18 @@ export function drawContributions(canvas: HTMLCanvasElement, opts: Options) {
 
   ctx.scale(scaleFactor, scaleFactor)
   ctx.textBaseline = 'hanging'
-  if (!opts.skipHeader) {
-    drawMetaData(ctx, {
-      ...opts,
-      width,
-      height,
-      data
-    })
-  }
 
-  data.years.forEach((year, i) => {
-    const offsetY = yearHeight * i + canvasMargin + headerOffset + 10
-    const offsetX = canvasMargin
-    drawYear(ctx, {
-      ...opts,
-      year,
-      offsetX,
-      offsetY,
-      data
-    })
+  const today = new Date()
+  const end = format(today, DATE_FORMAT)
+  const start = format(new Date(today.setMonth(today.getMonth() - 12)), DATE_FORMAT)
+
+  const offsetY = canvasMargin
+  const offsetX = canvasMargin
+  draw(ctx, {
+    ...opts,
+    range: { start, end },
+    offsetX,
+    offsetY,
+    data
   })
 }
