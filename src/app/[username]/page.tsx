@@ -1,3 +1,5 @@
+import startOfWeek from 'date-fns/startOfWeek'
+
 import Chart, { Contrib } from './Chart'
 
 const HOST = process.env.API_HOST
@@ -11,14 +13,14 @@ type Year = {
   }
 }
 
-type PageProps = {
-  params: { username: string }
-  searchParams: { scheme: 'light' | 'dark'; v: string }
-}
-
 type ChartData = {
   contributions: Contrib[]
   years: Year[]
+}
+
+type PageProps = {
+  params: { username: string }
+  searchParams: { scheme: 'light' | 'dark'; v: string }
 }
 
 export default async function ChartPage({ params, searchParams }: PageProps) {
@@ -28,8 +30,8 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
   } = await getData<ChartData>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const now = new Date()
-  const offset = now.getDay() * (24 * 60 * 60 * 1000)
-  const current = new Date(new Date(now.getTime() - offset).setMonth(now.getMonth() - 13))
+  const day = startOfWeek(now).getTime()
+  const current = new Date(new Date(day).setMonth(now.getMonth() - 13))
 
   const mappedContributions = {} as Record<string, Contrib>
   for (let i = 0; i < contributions.length; i++) {
@@ -41,7 +43,9 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
     delete contrib.date
   }
 
-  return <Chart data={mappedContributions} scheme={searchParams.scheme} />
+  return (
+    <Chart data={mappedContributions} scheme={searchParams.scheme} />
+  )
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {

@@ -1,3 +1,9 @@
+'use client'
+
+import startOfWeek from 'date-fns/startOfWeek'
+import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
+
 export type Contrib = {
   date?: string
   count: number
@@ -11,8 +17,6 @@ type ChartProps = {
 
 const Chart = ({ data = {}, scheme }: ChartProps) => {
   const now = new Date()
-  const offset = now.getDay() * (24 * 60 * 60 * 1000)
-
   const current = new Date(new Date().setMonth(now.getMonth() - 12))
   const dates = [new Date(current.getTime())]
   for (let i = 0; i < 11; i++) {
@@ -25,22 +29,20 @@ const Chart = ({ data = {}, scheme }: ChartProps) => {
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
           {Array.from({ length: 53 }).map((_, week) => {
-            const rel = new Date(now.getTime() - offset)
-            rel.setDate(-(52 * 7) + (week + 4) * 7)
+            const rel = startOfWeek(new Date().setDate(-(52 * 7) + week * 7))
             return (
               <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
-                {Array.from({ length: 7 }).map((_, i) => {
-                  const relDay = new Date(rel.getTime())
-                  relDay.setDate(rel.getDate() + i + 1)
-                  const key = relDay.toISOString().split('T')[0]
+                {Array.from({ length: 7 }).map((_, day) => {
+                  const relDay = addDays(rel, day)
+                  const key = format(relDay, 'yyyy-MM-dd')
                   const found = data[key]
                   return (
                     <rect
-                      key={`rect-${i}`}
+                      key={`rect-${day}`}
                       width="10"
                       height="10"
                       x="-37"
-                      y={13 * i}
+                      y={13 * day}
                       rx="2"
                       ry="2"
                       fill={`var(--color-calendar-graph-day-${found?.count ? `L${found.level}-bg` : 'bg'})`}
@@ -56,10 +58,10 @@ const Chart = ({ data = {}, scheme }: ChartProps) => {
         </g>
 
         <g transform="translate(20, 0)">
-          {dates.map((date, i) => (
+          {dates.map((date, x) => (
             <text
-              key={`month-${i}`}
-              x={`${(738 / 12) * i}`}
+              key={`month-${x}`}
+              x={`${(738 / 12) * x}`}
               y="-6"
               fill="var(--color-text-default)"
               style={{ fontSize: '0.66em' }}
@@ -69,13 +71,13 @@ const Chart = ({ data = {}, scheme }: ChartProps) => {
           ))}
         </g>
 
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, y) => (
           <text
-            key={`day-${i}`}
+            key={`day-${y}`}
             dx="-9"
-            dy={i * 13 + 8}
+            dy={y * 13 + 8}
             fill="var(--color-text-default)"
-            style={i % 2 ? { fontSize: '0.66em' } : { display: 'none' }}
+            style={y % 2 ? { fontSize: '0.66em' } : { display: 'none' }}
           >
             {day}
           </text>
