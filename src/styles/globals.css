@@ -25,7 +25,8 @@ svg, canvas {
 }
 
 :root,
-svg[data-color-mode='light'] {
+svg[data-color-mode='light'],
+canvas[data-color-mode='light'] {
   /* --color-text-default: rgba(128, 128, 128, 0.8); */
   --color-bg-default: #fff;
   --color-text-default: rgba(128, 128, 128, 0.8);
@@ -58,7 +59,8 @@ svg[data-color-mode='light'] {
   }
 }
 
-svg[data-color-mode='dark'] {
+svg[data-color-mode='dark'],
+canvas[data-color-mode='dark'] {
   --color-calendar-graph-day-bg: #222; /* #1e2523; */
   --color-calendar-graph-day-L1-bg: #0e4429;
   --color-calendar-graph-day-L2-bg: #006d32;

@@ -6,7 +6,7 @@ import parseISO from 'date-fns/parseISO'
 import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
 
-import Canvas, { GraphEntry, Contribution, ThemeName } from './Canvas'
+import Canvas, { GraphEntry, Contribution } from './Canvas'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -27,7 +27,7 @@ interface DataStruct {
 
 type PageProps = {
   params: { username: string }
-  searchParams: { theme: ThemeName; v: string }
+  searchParams: { scheme: 'light' | 'dark'; v: string }
 }
 
 export default async function CanvasPage({ params, searchParams }: PageProps) {
@@ -75,7 +75,7 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
 
   return (
     <>
-      <Canvas data={graphEntries} count={count} username={params.username} theme={searchParams.theme} />
+      <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
     </>
   )
 }

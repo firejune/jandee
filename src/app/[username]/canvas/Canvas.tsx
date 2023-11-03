@@ -5,7 +5,6 @@ import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import isAfter from 'date-fns/isAfter'
 import parseISO from 'date-fns/parseISO'
-import { themes } from './themes'
 
 export interface Contribution {
   date: string
@@ -22,26 +21,24 @@ const boxWidth = 10
 const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
-const canvasMargin = 10
+const canvasMargin = 2
 const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
 const scaleFactor = 3
-
-export type ThemeName = keyof typeof themes
 
 type ChartProps = {
   data: GraphEntry[][]
   count?: string
   username?: string
-  theme?: ThemeName
+  scheme?: 'light' | 'dark'
 }
 
-const Canvas = ({ data, username, count, theme: themeName }: ChartProps) => {
+const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current
-      const height = yearHeight + canvasMargin
+      const height = yearHeight + canvasMargin + 6
       const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
 
       canvas.width = width * scaleFactor
@@ -56,56 +53,25 @@ const Canvas = ({ data, username, count, theme: themeName }: ChartProps) => {
       ctx.textBaseline = 'hanging'
 
       drawGraph(ctx, {
-        ...{ username, count, themeName },
+        ...{ username, count },
         offsetX: canvasMargin,
         offsetY: canvasMargin,
         data
       })
     }
-  }, [data, username, count, themeName])
+  }, [data, username, count])
 
   return (
-    <canvas ref={canvasRef} />
+    <canvas data-color-mode={scheme} ref={canvasRef} />
   )
 }
 
-interface Theme {
-  background: string
-  text: string
-  meta: string
-  grade4: string
-  grade3: string
-  grade2: string
-  grade1: string
-  grade0: string
-}
-
 interface Options {
-  themeName?: keyof typeof themes
-  customTheme?: Theme
   count?: string
   username?: string
   data: GraphEntry[][]
   fontFace?: string
   footerText?: string
-}
-
-function getTheme(opts: Options): Theme {
-  const { themeName, customTheme } = opts
-  if (customTheme) {
-    return {
-      background: customTheme.background ?? themes.standard.background,
-      text: customTheme.text ?? themes.standard.text,
-      meta: customTheme.meta ?? themes.standard.meta,
-      grade4: customTheme.grade4 ?? themes.standard.grade4,
-      grade3: customTheme.grade3 ?? themes.standard.grade3,
-      grade2: customTheme.grade2 ?? themes.standard.grade2,
-      grade1: customTheme.grade1 ?? themes.standard.grade1,
-      grade0: customTheme.grade0 ?? themes.standard.grade0
-    }
-  }
-  const name = themeName ?? 'standard'
-  return themes[name] ?? themes.standard
 }
 
 interface DrawYearOptions extends Options {
@@ -122,12 +88,12 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
     data: graphEntries,
     fontFace = defaultFontFace
   } = opts
-  const theme = getTheme(opts)
   const lastDate = new Date()
+  const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
   if (username && count) {
     ctx.textBaseline = 'bottom'
-    ctx.fillStyle = theme.text
+    ctx.fillStyle = getStyle('--color-text-default')
     ctx.font = `10px '${fontFace}'`
     ctx.fillText(
       `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
@@ -136,10 +102,9 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
     )
   }
 
-  // chart legend
   let themeGrades = 5
   const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
-  ctx.fillStyle = theme.text
+  ctx.fillStyle = getStyle('--color-text-default')
   ctx.fillText(
     'Less',
     width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55,
@@ -147,8 +112,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   )
   ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
   for (let x = 0; x < 5; x += 1) {
-    // @ts-ignore
-    ctx.fillStyle = theme[`grade${x}`]
+    ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-bg` : 'bg'}`)
     ctx.fillRect(
       width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
       yearHeight - 5,
@@ -165,9 +129,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
       if (isAfter(cellDate, lastDate) || !day.info) {
         continue
       }
-      // @ts-ignore
-      const color = theme[`grade${day.info.intensity}`]
-      ctx.fillStyle = color
+      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.info.count ? `L${day.info.intensity}-bg` : 'bg'}`)
       ctx.fillRect(
         offsetX + (boxWidth + boxMargin) * x,
         offsetY + textHeight + (boxWidth + boxMargin) * y,
@@ -177,7 +139,6 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
     }
   }
 
-  // Draw Month Label
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
   for (let y = 0; y < graphEntries[0].length; y += 1) {
@@ -188,7 +149,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
     const firstMonthIsLast = y === 0 && month !== nextMonth
     const monthChanged = month !== lastCountedMonth
     if (monthChanged && !firstMonthIsLast) {
-      ctx.fillStyle = theme.meta
+      ctx.fillStyle = getStyle('--color-text-default')
       ctx.fillText(
         format(date, 'MMM'),
         offsetX + (boxWidth + boxMargin) * y,
