@@ -21,7 +21,7 @@ const boxWidth = 10
 const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
-const canvasMargin = 2
+const canvasMargin = 0
 const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
 const scaleFactor = 3
 
@@ -38,7 +38,7 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current
-      const height = yearHeight + canvasMargin + 6
+      const height = yearHeight + canvasMargin + 5
       const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
 
       canvas.width = width * scaleFactor
