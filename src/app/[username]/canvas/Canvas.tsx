@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-
 import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import isAfter from 'date-fns/isAfter'
@@ -31,8 +30,8 @@ export type ThemeName = keyof typeof themes
 
 type ChartProps = {
   data: GraphEntry[][]
-  count: string
-  username: string
+  count?: string
+  username?: string
   theme?: ThemeName
 }
 
@@ -66,9 +65,7 @@ const Canvas = ({ data, username, count, theme: themeName }: ChartProps) => {
   }, [data, username, count, themeName])
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'auto' }}>
-      <canvas ref={canvasRef} />
-    </div>
+    <canvas ref={canvasRef} />
   )
 }
 
@@ -86,8 +83,8 @@ interface Theme {
 interface Options {
   themeName?: keyof typeof themes
   customTheme?: Theme
-  count: string
-  username: string
+  count?: string
+  username?: string
   data: GraphEntry[][]
   fontFace?: string
   footerText?: string
@@ -111,7 +108,6 @@ function getTheme(opts: Options): Theme {
   return themes[name] ?? themes.standard
 }
 
-
 interface DrawYearOptions extends Options {
   offsetX?: number
   offsetY?: number
@@ -120,6 +116,7 @@ interface DrawYearOptions extends Options {
 function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   const {
     count,
+    username,
     offsetX = 0,
     offsetY = 0,
     data: graphEntries,
@@ -128,14 +125,16 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   const theme = getTheme(opts)
   const lastDate = new Date()
 
-  ctx.textBaseline = 'bottom'
-  ctx.fillStyle = theme.text
-  ctx.font = `10px '${fontFace}'`
-  ctx.fillText(
-    `${count} contribution${count === '1' ? '' : 's'} in the last year by @${opts.username} on GitHub`,
-    canvasMargin,
-    yearHeight + 5
-  )
+  if (username && count) {
+    ctx.textBaseline = 'bottom'
+    ctx.fillStyle = theme.text
+    ctx.font = `10px '${fontFace}'`
+    ctx.fillText(
+      `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
+      canvasMargin,
+      yearHeight + 5
+    )
+  }
 
   // chart legend
   let themeGrades = 5
