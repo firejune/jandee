@@ -21,7 +21,7 @@ const boxWidth = 10
 const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
-const canvasMargin = 0
+const canvasMargin = 1
 const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
 const scaleFactor = 3
 
