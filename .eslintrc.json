@@ -43,6 +43,7 @@
       },
       "plugins": ["@typescript-eslint"],
       "rules": {
+        "@next/next/no-img-element": "off",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/ban-tslint-comment": "off",
@@ -88,7 +89,8 @@
         "no-unused-vars": "off",
         "no-use-before-define": "off",
         "no-useless-constructor": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "react-hooks/exhaustive-deps": "off"
       }
     }
   ],

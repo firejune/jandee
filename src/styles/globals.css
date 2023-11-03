@@ -19,7 +19,7 @@ a {
   box-sizing: border-box;
 }
 
-svg, canvas {
+svg, img {
   width: 100%;
   height: auto;
 }

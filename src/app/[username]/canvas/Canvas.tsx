@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import Image from 'next/image'
+import { useRef, useState, useEffect } from 'react'
 import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import isAfter from 'date-fns/isAfter'
@@ -34,13 +35,13 @@ type ChartProps = {
 
 const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [url, setUrl] = useState('')
+  const height = yearHeight + canvasMargin + 5
+  const width = 53 * (boxWidth + boxMargin) + canvasMargin
 
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current
-      const height = yearHeight + canvasMargin + 5
-      const width = 53 * (boxWidth + boxMargin) + canvasMargin
-
       canvas.width = width * scaleFactor
       canvas.height = height * scaleFactor
 
@@ -58,11 +59,20 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
         offsetY: canvasMargin,
         data
       })
+
+      setUrl(canvas.toDataURL())
     }
-  }, [data, username, count])
+  }, [])
 
   return (
-    <canvas data-color-mode={scheme} ref={canvasRef} />
+    <>
+      {url ? (
+        <Image src={url} width={width} height={height} alt="" />
+      ) : (
+        <img src="/empth.png" alt="" />
+      )}
+      <canvas data-color-mode={scheme} ref={canvasRef} hidden />
+    </>
   )
 }
 
@@ -91,10 +101,11 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   const lastDate = new Date()
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
+  ctx.textBaseline = 'bottom'
+  ctx.fillStyle = getStyle('--color-text-default')
+  ctx.font = `10px '${fontFace}'`
+
   if (username && count) {
-    ctx.textBaseline = 'bottom'
-    ctx.fillStyle = getStyle('--color-text-default')
-    ctx.font = `10px '${fontFace}'`
     ctx.fillText(
       `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
       canvasMargin,
@@ -104,7 +115,6 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
 
   let themeGrades = 5
   const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
-  ctx.fillStyle = getStyle('--color-text-default')
   ctx.fillText(
     'Less',
     width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55,
@@ -153,15 +163,14 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
 
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
+  ctx.fillStyle = getStyle('--color-text-default')
   for (let y = 0; y < graphEntries[0].length; y += 1) {
     const date = parseISO(graphEntries[0][y].date)
     const month = getMonth(date) + 1
     const nextMonth = getMonth(parseISO(graphEntries[0][y + 1]?.date)) + 1
-
     const firstMonthIsLast = y === 0 && month !== nextMonth
     const monthChanged = month !== lastCountedMonth
     if (monthChanged && !firstMonthIsLast) {
-      ctx.fillStyle = getStyle('--color-text-default')
       ctx.fillText(
         format(date, 'MMM'),
         offsetX + (boxWidth + boxMargin) * y,
