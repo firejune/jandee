@@ -1,7 +1,12 @@
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
 
 import Chart, { Contrib } from './Chart'
+import { addDays } from 'date-fns'
 
+const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
 
 type Year = {
@@ -13,7 +18,7 @@ type Year = {
   }
 }
 
-type ChartData = {
+type DataStruct = {
   contributions: Contrib[]
   years: Year[]
 }
@@ -27,24 +32,22 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
   const {
     data: { contributions },
-  } = await getData<ChartData>(`${HOST}/api/v1/${params.username}?v=${token}`)
+  } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
-  const now = new Date()
-  const day = startOfWeek(now).getTime()
-  const current = new Date(new Date(day).setMonth(now.getMonth() - 13))
+  const today = new Date()
+  const start = format(new Date(today.setMonth(today.getMonth() - 12)), DATE_FORMAT)
+  let nextDate = startOfWeek(parseISO(start))
 
-  const mappedContributions = {} as Record<string, Contrib>
-  for (let i = 0; i < contributions.length; i++) {
-    const contrib = contributions[i]
-    const date = contrib.date as string
-    if (new Date(date) < current) break
-
-    mappedContributions[date] = contrib
-    delete contrib.date
-  }
+  const graphEntries = Array.from({ length: 53}).map(() => (
+    Array.from({ length: 7}).map((_, day) => {
+      const date = format(setDay(nextDate, day), DATE_FORMAT)
+      nextDate = addDays(nextDate, 1)
+      return getDateContrib(contributions, date) as Contrib
+    })
+  ))
 
   return (
-    <Chart data={mappedContributions} scheme={searchParams.scheme} />
+    <Chart data={graphEntries} scheme={searchParams.scheme} />
   )
 }
 
@@ -57,4 +60,8 @@ async function getData<T>(url: string): Promise<{ data: T }> {
 
   const data = await res.json()
   return { data }
+}
+
+function getDateContrib(contributions: Contrib[], date: string) {
+  return contributions.find(contrib => contrib.date === date)
 }

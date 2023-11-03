@@ -1,5 +1,10 @@
-import Chart from './Chart'
+import Chart, { Contrib } from './Chart'
 
 export default async function ChartPage() {
-  return <Chart />
+  const graphEntries = Array.from({ length: 53}).map(() => (
+    Array.from({ length: 7}).map(() => {
+      return {} as Contrib
+    })
+  ))
+  return <Chart data={graphEntries} />
 }
