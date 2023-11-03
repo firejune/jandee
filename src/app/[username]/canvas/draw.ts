@@ -1,34 +1,16 @@
-import addWeeks from 'date-fns/addWeeks'
 import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
 import parseISO from 'date-fns/parseISO'
-import setDay from 'date-fns/setDay'
-import startOfWeek from 'date-fns/startOfWeek'
 import { themes } from './themes'
 
-interface Year {
-  year: string;
-  total: number;
-  range: {
-    start: string;
-    end: string;
-  };
-}
-
-interface Contribution {
+export interface Contribution {
   date: string;
   count: number;
   intensity: number;
 }
 
-export interface DataStruct {
-  years: Year[];
-  contributions: Contribution[];
-}
-
-interface GraphEntry {
+export interface GraphEntry {
   date: string;
   info?: Contribution;
 }
@@ -36,18 +18,14 @@ interface GraphEntry {
 interface Options {
   themeName?: keyof typeof themes;
   customTheme?: Theme;
-  skipAxisLabel?: boolean;
+  count: string;
   username: string;
-  data: DataStruct;
+  data: GraphEntry[][];
   fontFace?: string;
   footerText?: string;
 }
 
 interface DrawYearOptions extends Options {
-  range: {
-    start: string;
-    end: string;
-  };
   offsetX?: number;
   offsetY?: number;
 }
@@ -70,7 +48,6 @@ function getPixelRatio() {
   return window.devicePixelRatio || 1
 }
 
-const DATE_FORMAT = 'yyyy-MM-dd'
 const boxWidth = 10
 const boxMargin = 2
 const textHeight = 15
@@ -97,71 +74,22 @@ function getTheme(opts: Options): Theme {
   return themes[name] ?? themes.standard
 }
 
-function getDateInfo(data: DataStruct, date: string) {
-  return data.contributions.find(contrib => contrib.date === date)
-}
-
-function getContributionCount(graphEntries: GraphEntry[][]) {
-  return graphEntries.reduce((rowTotal, row) => {
-    return (
-      rowTotal +
-      row.reduce((colTotal, col) => {
-        return colTotal + (col.info ? col.info.count : 0)
-      }, 0)
-    )
-  }, 0)
-}
-
 function draw(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   const {
-    range,
+    count,
     offsetX = 0,
     offsetY = 0,
-    data,
+    data: graphEntries,
     fontFace = defaultFontFace
   } = opts
   const theme = getTheme(opts)
-
-  const lastDate = parseISO(range.end)
-  const firstRealDate = parseISO(range.start)
-  const firstDate = startOfWeek(firstRealDate)
-
-  let nextDate = firstDate
-  const firstRowDates: GraphEntry[] = []
-  const graphEntries: GraphEntry[][] = []
-
-  while (isBefore(nextDate, lastDate)) {
-    const date = format(nextDate, DATE_FORMAT)
-    firstRowDates.push({
-      date,
-      info: getDateInfo(data, date)
-    })
-    nextDate = addWeeks(nextDate, 1)
-  }
-
-  graphEntries.push(firstRowDates)
-
-  for (let i = 1; i < 7; i += 1) {
-    graphEntries.push(
-      firstRowDates.map(dateObj => {
-        const date = format(setDay(parseISO(dateObj.date), i), DATE_FORMAT)
-        return {
-          date,
-          info: getDateInfo(data, date)
-        }
-      })
-    )
-  }
-
-  const count = new Intl.NumberFormat().format(
-    getContributionCount(graphEntries)
-  )
+  const lastDate = new Date()
 
   ctx.textBaseline = 'bottom'
   ctx.fillStyle = theme.text
   ctx.font = `10px '${fontFace}'`
   ctx.fillText(
-    `${count} contribution${count === '1' ? '' : 's'} in the last year from @${opts.username} on GitHub`,
+    `${count} contribution${count === '1' ? '' : 's'} in the last year by @${opts.username} on GitHub`,
     canvasMargin,
     yearHeight + 5
   )
@@ -213,9 +141,11 @@ function draw(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   for (let y = 0; y < graphEntries[0].length; y += 1) {
     const date = parseISO(graphEntries[0][y].date)
     const month = getMonth(date) + 1
-    const firstMonthIsDec = month === 12 && y === 0
+    const nextMonth = getMonth(parseISO(graphEntries[0][y + 1]?.date)) + 1
+
+    const firstMonthIsLast = y === 0 && month !== nextMonth
     const monthChanged = month !== lastCountedMonth
-    if (!opts.skipAxisLabel && monthChanged && !firstMonthIsDec) {
+    if (monthChanged && !firstMonthIsLast) {
       ctx.fillStyle = theme.meta
       ctx.fillText(
         format(date, 'MMM'),
@@ -229,7 +159,6 @@ function draw(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
 
 export function drawContributions(canvas: HTMLCanvasElement, opts: Options) {
   const { data } = opts
-
   const height = yearHeight + canvasMargin
   const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
 
@@ -237,7 +166,6 @@ export function drawContributions(canvas: HTMLCanvasElement, opts: Options) {
   canvas.height = height * scaleFactor
 
   const ctx = canvas.getContext('2d')
-
   if (!ctx) {
     throw new Error('Could not get 2d context from Canvas')
   }
@@ -245,15 +173,10 @@ export function drawContributions(canvas: HTMLCanvasElement, opts: Options) {
   ctx.scale(scaleFactor, scaleFactor)
   ctx.textBaseline = 'hanging'
 
-  const today = new Date()
-  const end = format(today, DATE_FORMAT)
-  const start = format(new Date(today.setMonth(today.getMonth() - 12)), DATE_FORMAT)
-
   const offsetY = canvasMargin
   const offsetX = canvasMargin
   draw(ctx, {
     ...opts,
-    range: { start, end },
     offsetX,
     offsetY,
     data
