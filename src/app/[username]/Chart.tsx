@@ -1,6 +1,7 @@
 'use client'
 
 import addMonths from 'date-fns/addMonths'
+import format from 'date-fns/format'
 
 export type Contrib = {
   date: string
@@ -9,23 +10,23 @@ export type Contrib = {
 }
 
 type ChartProps = {
-  data?: Contrib[][]
+  graph?: (Contrib | null)[][]
   scheme?: 'light' | 'dark'
 }
 
-const Chart = ({ data = [], scheme }: ChartProps) => {
+const Chart = ({ graph = [], scheme }: ChartProps) => {
   const today = new Date()
-  const start = new Date(today.setMonth(today.getMonth() - 12))
-  const dates = Array.from({ length: 12 }).map((_, months) => addMonths(start, months))
+  const start = addMonths(today, -12)
+  const months = Array.from({ length: 12 }).map((_, months) => format(addMonths(start, months), 'LLL'))
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
     <svg data-color-mode={scheme} width="768" height="120" viewBox="0 0 768 120" style={{ background: 'transparent' }}>
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
-          {data.map((contribs, week) => (
+          {graph.map((contribs, week) => (
             <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
-              {contribs.map((contrib, day) => (
+              {contribs.map((contrib, day) => contrib && (
                   <rect
                     key={`rect-${day}`}
                     width="10"
@@ -45,7 +46,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
         </g>
 
         <g transform="translate(20, 0)">
-          {dates.map((date, x) => (
+          {months.map((month, x) => (
             <text
               key={`month-${x}`}
               x={`${(738 / 12) * x}`}
@@ -53,7 +54,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
               fill="var(--color-text-default)"
               style={{ fontSize: '0.66em' }}
             >
-              {date.toLocaleString('en-US', { month: 'short' })}
+              {month}
             </text>
           ))}
         </g>

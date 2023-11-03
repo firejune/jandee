@@ -1,10 +1,10 @@
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
+import isAfter from 'date-fns/isAfter'
+import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 
 import Chart, { Contrib } from './Chart'
-import { addDays } from 'date-fns'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -35,19 +35,20 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
   } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const today = new Date()
-  const start = format(new Date(today.setMonth(today.getMonth() - 12)), DATE_FORMAT)
-  let nextDate = startOfWeek(parseISO(start))
+  const startDate = addMonths(today, -12)
+  let nextDate = startOfWeek(startDate)
 
   const graphEntries = Array.from({ length: 53}).map(() => (
-    Array.from({ length: 7}).map((_, day) => {
-      const date = format(setDay(nextDate, day), DATE_FORMAT)
+    Array.from({ length: 7}).map(() => {
+      if (isAfter(nextDate, today)) return null
+      const date = format(nextDate, DATE_FORMAT)
       nextDate = addDays(nextDate, 1)
       return getDateContrib(contributions, date) as Contrib
     })
   ))
 
   return (
-    <Chart data={graphEntries} scheme={searchParams.scheme} />
+    <Chart graph={graphEntries} scheme={searchParams.scheme} />
   )
 }
 
