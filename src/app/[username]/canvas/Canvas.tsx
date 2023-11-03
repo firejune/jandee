@@ -111,14 +111,20 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
     yearHeight + 5
   )
   ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
+
   for (let x = 0; x < 5; x += 1) {
+    ctx.beginPath()
+    ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-border` : 'border'}`)
     ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-bg` : 'bg'}`)
-    ctx.fillRect(
+    ctx.roundRect(
       width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
       yearHeight - 5,
       10,
-      10
+      10,
+      2
     )
+    ctx.fill()
+    ctx.stroke()
     themeGrades -= 1
   }
 
@@ -129,15 +135,21 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
       if (isAfter(cellDate, lastDate) || !day.info) {
         continue
       }
+      ctx.beginPath()
+      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.info.count ? `L${day.info.intensity}-border` : 'border'}`)
       ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.info.count ? `L${day.info.intensity}-bg` : 'bg'}`)
-      ctx.fillRect(
+      ctx.roundRect(
         offsetX + (boxWidth + boxMargin) * x,
         offsetY + textHeight + (boxWidth + boxMargin) * y,
         10,
-        10
+        10,
+        2
       )
+      ctx.fill()
+      ctx.stroke()
     }
   }
+
 
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
