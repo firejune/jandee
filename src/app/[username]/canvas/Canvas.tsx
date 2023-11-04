@@ -1,7 +1,6 @@
 'use client'
 
-import Image from 'next/image'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, Fragment } from 'react'
 import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import isAfter from 'date-fns/isAfter'
@@ -35,9 +34,12 @@ type ChartProps = {
 
 const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [url, setUrl] = useState('')
+  const imgRef = useRef<HTMLImageElement>(null)
+  const [url, setUrl] = useState('/empth.png')
+  const [scale, setScale] = useState(1)
   const height = yearHeight + canvasMargin + 5
   const width = 53 * (boxWidth + boxMargin) + canvasMargin
+  const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -62,15 +64,35 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
 
       setUrl(canvas.toDataURL())
     }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return (
     <>
-      {url ? (
-        <Image src={url} width={width} height={height} alt="" />
-      ) : (
-        <img src="/empth.png" alt="" />
-      )}
+      <img useMap="#info" width={width} height={height} src={url} alt="" ref={imgRef} />
+      <map name="info">
+        {data.map((entry, y) => (
+          <Fragment key={y}>
+            {entry.map((contrib, x) => {
+              const left = canvasMargin + (boxWidth + boxMargin) * x
+              const top = canvasMargin + textHeight + (boxWidth + boxMargin) * y
+              const starts = [left * scale, top * scale]
+              const ends = [(left + 10) * scale, (top + 10) * scale]
+              return (
+                <area
+                  key={x}
+                  shape="rect"
+                  coords={`${starts.join(',')}, ${ends.join(',')}`}
+                  title={`${contrib.date} / ${contrib.info?.count || '0'}`}
+                />
+              )
+            })}
+          </Fragment>
+        ))}
+      </map>
       <canvas data-color-mode={scheme} ref={canvasRef} hidden />
     </>
   )
