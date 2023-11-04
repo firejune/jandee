@@ -1,5 +1,5 @@
 export default async function CanvasPage() {
   return (
-    <img src="/empth.png" alt="" />
+    <img src="/empty.png" alt="" />
   )
 }

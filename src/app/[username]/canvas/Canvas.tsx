@@ -35,7 +35,7 @@ type ChartProps = {
 const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-  const [url, setUrl] = useState('/empth.png')
+  const [url, setUrl] = useState('/empty.png')
   const [scale, setScale] = useState(1)
   const height = yearHeight + canvasMargin + 5
   const width = 53 * (boxWidth + boxMargin) + canvasMargin

@@ -50,7 +50,7 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
     const date = format(nextDate, DATE_FORMAT)
     firstRowDates.push({
       date,
-      info: getDateInfo(data, date)
+      info: getDateInfo(data, date),
     })
     nextDate = addWeeks(nextDate, 1)
   }
@@ -63,7 +63,7 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
         const date = format(setDay(parseISO(dateObj.date), i), DATE_FORMAT)
         return {
           date,
-          info: getDateInfo(data, date)
+          info: getDateInfo(data, date),
         }
       })
     )
