@@ -35,8 +35,8 @@ const Chart = ({ graph = [], scheme }: ChartProps) => {
                     y={13 * day}
                     rx="2"
                     ry="2"
-                    fill={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-bg` : 'bg'})`}
-                    stroke={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-border` : 'border'})`}
+                    fill={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}bg)`}
+                    stroke={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}border)`}
                   >
                     <title>{`${contrib.date} / ${contrib.count || '0'}`}</title>
                   </rect>

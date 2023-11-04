@@ -1,12 +1,12 @@
 import addWeeks from 'date-fns/addWeeks'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
-import isBefore from 'date-fns/isBefore'
+import isAfter from 'date-fns/isAfter'
 import parseISO from 'date-fns/parseISO'
 import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
 
-import Canvas, { GraphEntry, Contribution } from './Canvas'
+import Canvas, { Contrib } from './Canvas'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -22,7 +22,7 @@ interface Year {
 
 interface DataStruct {
   years: Year[];
-  contributions: Contribution[];
+  contributions: Contrib[];
 }
 
 type PageProps = {
@@ -43,50 +43,35 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
   const firstDate = startOfWeek(firstRealDate)
 
   let nextDate = firstDate
-  const firstRowDates: GraphEntry[] = []
-  const graphEntries: GraphEntry[][] = []
+  const firstRowDates: Contrib[] = []
+  const graphEntries: Contrib[][] = []
+  const getContrib = (date: string) => isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date)
 
-  while (isBefore(nextDate, lastDate)) {
+  while (!isAfter(nextDate, lastDate)) {
     const date = format(nextDate, DATE_FORMAT)
-    firstRowDates.push({
-      date,
-      info: getDateInfo(data, date),
-    })
+    firstRowDates.push({ date, ...getContrib(date) })
     nextDate = addWeeks(nextDate, 1)
   }
-
   graphEntries.push(firstRowDates)
 
   for (let i = 1; i < 7; i += 1) {
     graphEntries.push(
       firstRowDates.map(dateObj => {
         const date = format(setDay(parseISO(dateObj.date), i), DATE_FORMAT)
-        return {
-          date,
-          info: getDateInfo(data, date),
-        }
+        return { date, ...getContrib(date) }
       })
     )
   }
 
-  const count = new Intl.NumberFormat().format(
-    getContributionCount(graphEntries)
-  )
-
+  const count = new Intl.NumberFormat().format(getContributionCount(graphEntries))
   return (
-    <>
-      <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
-    </>
+    <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
   )
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
   const res = await fetch(url)
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
-  }
-
+  if (!res.ok) throw new Error('Failed to fetch data')
   const data = await res.json()
   return { data }
 }
@@ -95,13 +80,11 @@ function getDateInfo(data: DataStruct, date: string) {
   return data.contributions.find(contrib => contrib.date === date)
 }
 
-function getContributionCount(graphEntries: GraphEntry[][]) {
+function getContributionCount(graphEntries: Contrib[][]) {
   return graphEntries.reduce((rowTotal, row) => {
     return (
       rowTotal +
-      row.reduce((colTotal, col) => {
-        return colTotal + (col.info ? col.info.count : 0)
-      }, 0)
+      row.reduce((colTotal, col) => colTotal + (col.count || 0), 0)
     )
   }, 0)
 }

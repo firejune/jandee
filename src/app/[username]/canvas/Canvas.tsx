@@ -3,18 +3,12 @@
 import { useRef, useState, useEffect, Fragment } from 'react'
 import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
-import isAfter from 'date-fns/isAfter'
 import parseISO from 'date-fns/parseISO'
 
-export interface Contribution {
+export interface Contrib {
   date: string
-  count: number
-  intensity: number
-}
-
-export interface GraphEntry {
-  date: string
-  info?: Contribution
+  count?: number
+  intensity?: number
 }
 
 const boxWidth = 10
@@ -26,7 +20,7 @@ const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
 const scaleFactor = 3
 
 type ChartProps = {
-  data: GraphEntry[][]
+  data: Contrib[][]
   count?: string
   username?: string
   scheme?: 'light' | 'dark'
@@ -86,7 +80,7 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
                   key={x}
                   shape="rect"
                   coords={`${starts.join(',')}, ${ends.join(',')}`}
-                  title={`${contrib.date} / ${contrib.info?.count || '0'}`}
+                  title={`${contrib.date}(${format(parseISO(contrib.date), 'EEE')}) / ${contrib.count || '0'}`}
                 />
               )
             })}
@@ -101,7 +95,7 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
 interface Options {
   count?: string
   username?: string
-  data: GraphEntry[][]
+  data: Contrib[][]
   fontFace?: string
   footerText?: string
 }
@@ -111,16 +105,14 @@ interface DrawYearOptions extends Options {
   offsetY?: number
 }
 
-function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
-  const {
-    count,
-    username,
-    offsetX = 0,
-    offsetY = 0,
-    data: graphEntries,
-    fontFace = defaultFontFace
-  } = opts
-  const lastDate = new Date()
+function drawGraph(ctx: CanvasRenderingContext2D, {
+  count,
+  username,
+  offsetX = 0,
+  offsetY = 0,
+  data: graphEntries,
+  fontFace = defaultFontFace
+}: DrawYearOptions) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
   ctx.textBaseline = 'bottom'
@@ -146,8 +138,8 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
 
   for (let x = 0; x < 5; x += 1) {
     ctx.beginPath()
-    ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-border` : 'border'}`)
-    ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-bg` : 'bg'}`)
+    ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
+    ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
     ctx.roundRect(
       width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
       yearHeight - 5,
@@ -163,13 +155,10 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
   for (let y = 0; y < graphEntries.length; y += 1) {
     for (let x = 0; x < graphEntries[y].length; x += 1) {
       const day = graphEntries[y][x]
-      const cellDate = parseISO(day.date)
-      if (isAfter(cellDate, lastDate) || !day.info) {
-        continue
-      }
+      if (!day.intensity) continue
       ctx.beginPath()
-      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.info.count ? `L${day.info.intensity}-border` : 'border'}`)
-      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.info.count ? `L${day.info.intensity}-bg` : 'bg'}`)
+      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
+      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg`)
       ctx.roundRect(
         offsetX + (boxWidth + boxMargin) * x,
         offsetY + textHeight + (boxWidth + boxMargin) * y,
@@ -181,7 +170,6 @@ function drawGraph(ctx: CanvasRenderingContext2D, opts: DrawYearOptions) {
       ctx.stroke()
     }
   }
-
 
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
