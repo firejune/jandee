@@ -13,17 +13,26 @@ This is a simple project that lets you embed a GitHub user's contribution chart 
 
 #### How to change color mode
 
-You can change the color using the `scheme` parameter. Values include `light` and `dark`.
+You can change the color using the `scheme` parameter. Values include `light` and `dark`. If the parameter is not used, it is automatically selected by the system.
 
 ```
 https://jandee.vercel.app/%USERNAME%?scheme=dark
 ```
 
-#### Known caveats
+#### Drawing using canvas
 
-1. ~~Not responsive (looks kinda bad on mobile)~~
-2. Notion doesn't expose the user loading the embed's color scheme so cannot dynamically create a dark scheme version of the chart.
+Basically, charts are created using SVG. You can use Canvas as an alternative. The difference from the SVG version is that it shows the total count and not the day of the week.
+
+```
+https://jandee.vercel.app/%USERNAME%/canvas
+```
 
 #### Credit
 
+This project was inspired by the following project::
+
+@bizarre's [notion-github-embed](https://github.com/bizarre/notion-github-embed) is easy embed GitHub contribution chart into any Notion document.
+
 @sallar's [github-contributions-chart](https://github.com/sallar/github-contributions-chart) is used to fetch GitHub user contributions. <3
+
+@sallar's [github-contributions-canvas](https://github.com/sallar/github-contributions-canvas) is drawing a heat-map of Github contributions on HTML Canvas
