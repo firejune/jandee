@@ -64,20 +64,22 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
     <>
       <img useMap="#info" width={width} height={height} src={url} alt="" ref={imgRef} />
       <map name="info">
-        {data.map((entry, y) => (
-          <Fragment key={y}>
-            {entry.map((contrib, x) => {
+        {data.map((entry, x) => (
+          <Fragment key={x}>
+            {entry.map((contrib, y) => {
               const left = canvasMargin + (boxWidth + boxMargin) * x
               const top = canvasMargin + textHeight + (boxWidth + boxMargin) * y
               const starts = [left * scale, top * scale]
               const ends = [(left + 10) * scale, (top + 10) * scale]
               return (
-                <area
-                  key={x}
-                  shape="rect"
-                  coords={`${starts.join(',')}, ${ends.join(',')}`}
-                  title={`${contrib.date}(${format(parseISO(contrib.date), 'EEE')}) / ${contrib.count || '0'}`}
-                />
+                contrib.intensity && (
+                  <area
+                    key={y}
+                    shape="rect"
+                    coords={`${starts.join(',')}, ${ends.join(',')}`}
+                    title={`${contrib.date}(${format(parseISO(contrib.date), 'EEE')}) / ${contrib.count || '0'}`}
+                  />
+                )
               )
             })}
           </Fragment>
