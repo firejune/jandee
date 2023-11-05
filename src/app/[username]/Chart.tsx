@@ -44,7 +44,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
             <g key={`week-${x}`} transform={`translate(${(boxSize + boxMargin) * x}, 0)`}>
               {week.map((day, y) => (
                 <rect
-                  key={`rect-${y}`}
+                  key={`day-${y}`}
                   width={boxSize}
                   height={boxSize}
                   y={(boxSize + boxMargin) * y}
@@ -87,7 +87,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
         <g transform="translate(-9, 9)">
           {data[0].map((day, y) => (
             <text
-              key={`day-${y}`}
+              key={`weekday-${y}`}
               dy={y * textHeight}
               fill="var(--color-text-default)"
               style={y % 2 ? { fontSize } : { display: 'none' }}
