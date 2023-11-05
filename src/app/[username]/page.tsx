@@ -26,13 +26,13 @@ type DataStruct = {
 }
 
 type PageProps = {
-  params: { username: string; tz: string }
-  searchParams: { scheme: 'light' | 'dark'; v: string }
+  params: { username: string }
+  searchParams: { scheme: 'light' | 'dark'; tz: string; v: string }
 }
 
 export default async function ChartPage({
-  params: { username, tz: timeZone = 'Asia/Seoul' },
-  searchParams,
+  params: { username },
+  searchParams: { tz: timeZone = 'Asia/Seoul', ...searchParams },
 }: PageProps) {
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
   const {

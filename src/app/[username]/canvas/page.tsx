@@ -28,14 +28,17 @@ interface DataStruct {
 
 type PageProps = {
   params: { username: string }
-  searchParams: { scheme: 'light' | 'dark'; v: string }
+  searchParams: { scheme: 'light' | 'dark'; tz: string; v: string }
 }
 
-export default async function CanvasPage({ params, searchParams }: PageProps) {
+export default async function CanvasPage({
+  params: { username },
+  searchParams: { tz: timeZone = 'Asia/Seoul', ...searchParams },
+}: PageProps) {
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
-  const { data } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
+  const { data } = await getData<DataStruct>(`${HOST}/api/v1/${username}?v=${token}`)
 
-  const today = new Date()
+  const today = new Date(new Date().toLocaleString('en', { timeZone }))
   const lastDate = today
   let nextDate = startOfWeek(addMonths(today, -12))
   if (differenceInCalendarWeeks(today, nextDate) > 52) {
@@ -63,7 +66,7 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
   }
 
   const count = getContributionCount(graphEntries)
-  return <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
+  return <Canvas data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
