@@ -3,8 +3,10 @@ import startOfWeek from 'date-fns/startOfWeek'
 import isAfter from 'date-fns/isAfter'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
+import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Chart, { Contrib } from './Chart'
+import { addWeeks } from 'date-fns'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -35,21 +37,21 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
   } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const today = new Date()
-  const startDate = addMonths(today, -12)
-  let nextDate = startOfWeek(startDate)
+  let nextDate = startOfWeek(addMonths(today, -12))
+  if (differenceInCalendarWeeks(today, nextDate) > 52) {
+    nextDate = addWeeks(nextDate, 1)
+  }
 
-  const graphEntries = Array.from({ length: 53}).map(() => (
-    Array.from({ length: 7}).map(() => {
+  const graphEntries = Array.from({ length: 53 }).map(() =>
+    Array.from({ length: 7 }).map(() => {
       if (isAfter(nextDate, today)) return null
       const date = format(nextDate, DATE_FORMAT)
       nextDate = addDays(nextDate, 1)
       return getDateContrib(contributions, date) as Contrib
     })
-  ))
-
-  return (
-    <Chart graph={graphEntries} scheme={searchParams.scheme} />
   )
+
+  return <Chart graph={graphEntries} scheme={searchParams.scheme} />
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {

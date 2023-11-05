@@ -161,8 +161,9 @@ function drawGraph(
     const month = getMonth(date) + 1
     const nextMonth = getMonth(parseISO(graphEntries[0][y + 1]?.date)) + 1
     const firstMonthIsLast = y === 0 && month !== nextMonth
+    const laistMonthIsDiff = y === graphEntries[0].length - 1 && month !== lastCountedMonth
     const monthChanged = month !== lastCountedMonth
-    if (monthChanged && !firstMonthIsLast) {
+    if (monthChanged && !firstMonthIsLast && !laistMonthIsDiff) {
       ctx.fillText(format(date, 'MMM'), offsetX + (boxWidth + boxMargin) * y, offsetY)
       lastCountedMonth = month
     }

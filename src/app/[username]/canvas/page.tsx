@@ -5,6 +5,7 @@ import isAfter from 'date-fns/isAfter'
 import parseISO from 'date-fns/parseISO'
 import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
+import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Canvas, { Contrib } from './Canvas'
 
@@ -35,13 +36,13 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const today = new Date()
-
   const lastDate = today
-  const firstRealDate = addMonths(today, -12)
-  const firstDate = startOfWeek(firstRealDate)
+  let nextDate = startOfWeek(addMonths(today, -12))
+  if (differenceInCalendarWeeks(today, nextDate) > 52) {
+    nextDate = addWeeks(nextDate, 1)
+  }
 
-  let nextDate = firstDate
-  const firstRowDates: Contrib[] = []
+  let firstRowDates: Contrib[] = []
   const graphEntries: Contrib[][] = []
   const getContrib = (date: string) => (isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date))
 
