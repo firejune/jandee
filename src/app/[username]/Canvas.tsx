@@ -130,7 +130,7 @@ function drawGraph(
     ctx.beginPath()
     ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
     ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-    ctx.roundRect(width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27, yearHeight - 5, 10, 10, 2)
+    ctx.roundRect(width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 29, yearHeight - 7, 10, 10, 2)
     ctx.fill()
     ctx.stroke()
     themeGrades -= 1
