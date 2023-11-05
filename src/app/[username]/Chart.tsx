@@ -1,6 +1,7 @@
 'use client'
 
-import addMonths from 'date-fns/addMonths'
+import getMonth from 'date-fns/getMonth'
+import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
 
 export type Contrib = {
@@ -14,65 +15,87 @@ type ChartProps = {
   scheme?: 'light' | 'dark'
 }
 
+const boxWidth = 10
+const boxMargin = 3
+const canvasMargin = 2
+const textHeight = 13
+const textWidth = 24
+const yearHeight = textHeight + (boxWidth + boxMargin) * 7 + canvasMargin
+const fontSize = '0.66em'
+
 const Chart = ({ data = [], scheme }: ChartProps) => {
-  const today = new Date()
-  const start = addMonths(today, -12)
-  const months = Array.from({ length: 12 }).map((_, months) => format(addMonths(start, months), 'LLL'))
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const height = yearHeight + canvasMargin + 12
+  const width = data.length * (boxWidth + boxMargin) + canvasMargin * 2 + textWidth
+  let lastCountedMonth = 0
 
   return (
-    <svg data-color-mode={scheme} width="768" height="120" viewBox="0 0 768 120" style={{ background: 'transparent' }}>
+    <svg
+      data-color-mode={scheme}
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      style={{ background: 'transparent' }}
+    >
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
-          {data.map((contribs, week) => (
-            <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
-              {contribs.map(
-                (contrib, day) =>
-                  contrib.count !== undefined && (
-                    <rect
-                      key={`rect-${day}`}
-                      width="10"
-                      height="10"
-                      x="-37"
-                      y={13 * day}
-                      rx="2"
-                      ry="2"
-                      fill={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}bg)`}
-                      stroke={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}border)`}
-                    >
-                      <title>{`${contrib.date || ''} / ${contrib.count || '0'}`}</title>
-                    </rect>
-                  )
-              )}
+          {data.map((week, x) => (
+            <g key={`week-${x}`} transform={`translate(${(boxWidth + boxMargin) * x}, 0)`}>
+              {week.map((day, y) => (
+                <rect
+                  key={`rect-${y}`}
+                  width="10"
+                  height="10"
+                  x="-37"
+                  y={(boxWidth + boxMargin) * y}
+                  rx="2"
+                  ry="2"
+                  fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
+                  stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
+                >
+                  <title>{`${day.date || ''} / ${day.count || '0'}`}</title>
+                </rect>
+              ))}
             </g>
           ))}
         </g>
 
         <g transform="translate(20, 0)">
-          {months.map((month, x) => (
+          {data.map((week, x) => {
+            const date = parseISO(week[0].date)
+            const month = getMonth(date) + 1
+            const nextMonth = data[x + 1] ? getMonth(parseISO(data[x + 1][0].date)) + 1 : 0
+            const firstMonthIsLast = x === 0 && month !== nextMonth
+            const laistMonthIsDiff = x === data.length - 1 && month !== lastCountedMonth
+            if (month !== lastCountedMonth && !firstMonthIsLast && !laistMonthIsDiff) {
+              lastCountedMonth = month
+              return (
+                <text
+                  key={`month-${x}`}
+                  x={`${x * (boxWidth + boxMargin)}`}
+                  y="-6"
+                  fill="var(--color-text-default)"
+                  style={{ fontSize }}
+                >
+                  {format(date, 'MMM')}
+                </text>
+              )
+            }
+            return null
+          })}
+        </g>
+
+        <g transform="translate(-9, 9)">
+          {data[0].map((day, y) => (
             <text
-              key={`month-${x}`}
-              x={`${(738 / 12) * x}`}
-              y="-6"
+              key={`day-${y}`}
+              dy={y * textHeight}
               fill="var(--color-text-default)"
-              style={{ fontSize: '0.66em' }}
+              style={y % 2 ? { fontSize } : { display: 'none' }}
             >
-              {month}
+              {format(parseISO(day.date), 'EEE')}
             </text>
           ))}
         </g>
-
-        {weekDays.map((day, y) => (
-          <text
-            key={`day-${y}`}
-            dx="-9"
-            dy={y * 13 + 8}
-            fill="var(--color-text-default)"
-            style={y % 2 ? { fontSize: '0.66em' } : { display: 'none' }}
-          >
-            {day}
-          </text>
-        ))}
       </g>
     </svg>
   )

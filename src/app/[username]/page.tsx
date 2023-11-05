@@ -44,13 +44,17 @@ export default async function ChartPage({
     pastDate = addWeeks(pastDate, 1)
   }
 
-  const graphEntries = Array.from({ length: 53 }).map(() =>
-    Array.from({ length: 7 }).map(() => {
-      const date = format(pastDate, DATE_FORMAT)
-      if (isAfter(pastDate, presentDate)) return { date }
-      pastDate = addDays(pastDate, 1)
-      return { date, ...getDateContrib(data, date) }
-    })
+  const graphEntries = Array.from({ length: 53 }).map(
+    () =>
+      Array.from({ length: 7 })
+        .map(() => {
+          const date = format(pastDate, DATE_FORMAT)
+          if (isAfter(pastDate, presentDate)) return null
+          pastDate = addDays(pastDate, 1)
+          // return { date, count: 0}
+          return getDateContrib(data, date)
+        })
+        .filter(contrib => contrib) as Contrib[]
   )
 
   return element === 'canvas' ? (

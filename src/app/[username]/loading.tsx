@@ -15,7 +15,7 @@ export default async function ChartPage() {
     Array.from({ length: 7 }).map(() => {
       const date = format(nextDate, DATE_FORMAT)
       nextDate = addDays(nextDate, 1)
-      return { date, count: 0 }
+      return { date }
     })
   )
   return <Chart data={graphEntries} />
