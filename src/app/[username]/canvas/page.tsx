@@ -36,9 +36,10 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const today = new Date()
-  const lastDate = today
-  let nextDate = startOfWeek(addMonths(today, -12))
-  if (differenceInCalendarWeeks(today, nextDate) > 52) {
+  const offset = today.getTimezoneOffset() * 60000
+  const lastDate = new Date(today.getTime() + offset)
+  let nextDate = startOfWeek(addMonths(lastDate, -12))
+  if (differenceInCalendarWeeks(lastDate, nextDate) > 52) {
     nextDate = addWeeks(nextDate, 1)
   }
 
