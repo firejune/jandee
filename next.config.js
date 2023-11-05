@@ -11,6 +11,15 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/api/v1',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'max-age=1, stale-while-revalidate=59',
+          },
+        ],
+      },
     ]
   },
 }
