@@ -37,7 +37,7 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
 
   const today = new Date()
   const offset = today.getTimezoneOffset() * 60000
-  const lastDate = new Date(today.getTime() + offset)
+  const lastDate = new Date(today.getTime() - offset)
   let nextDate = startOfWeek(addMonths(lastDate, -12))
   if (differenceInCalendarWeeks(lastDate, nextDate) > 52) {
     nextDate = addWeeks(nextDate, 1)
