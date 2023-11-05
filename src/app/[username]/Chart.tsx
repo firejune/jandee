@@ -10,11 +10,11 @@ export type Contrib = {
 }
 
 type ChartProps = {
-  graph?: (Contrib | null)[][]
+  data?: (Contrib | null)[][]
   scheme?: 'light' | 'dark'
 }
 
-const Chart = ({ graph = [], scheme }: ChartProps) => {
+const Chart = ({ data = [], scheme }: ChartProps) => {
   const today = new Date()
   const start = addMonths(today, -12)
   const months = Array.from({ length: 12 }).map((_, months) => format(addMonths(start, months), 'LLL'))
@@ -24,7 +24,7 @@ const Chart = ({ graph = [], scheme }: ChartProps) => {
     <svg data-color-mode={scheme} width="768" height="120" viewBox="0 0 768 120" style={{ background: 'transparent' }}>
       <g transform="translate(10, 20)">
         <g transform="translate(56, 0)">
-          {graph.map((contribs, week) => (
+          {data.map((contribs, week) => (
             <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
               {contribs.map(
                 (contrib, day) =>

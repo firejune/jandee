@@ -1,9 +1,9 @@
+import addDays from 'date-fns/addDays'
 import addWeeks from 'date-fns/addWeeks'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import parseISO from 'date-fns/parseISO'
-import setDay from 'date-fns/setDay'
 import startOfWeek from 'date-fns/startOfWeek'
 import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
@@ -38,32 +38,22 @@ export default async function CanvasPage({
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${username}?v=${token}`)
 
-  const today = new Date(new Date().toLocaleString('en', { timeZone }))
-  const lastDate = today
-  let nextDate = startOfWeek(addMonths(today, -12))
-  if (differenceInCalendarWeeks(today, nextDate) > 52) {
+  const lastDate = new Date(new Date().toLocaleString('en', { timeZone }))
+  let nextDate = startOfWeek(addMonths(lastDate, -12))
+  if (differenceInCalendarWeeks(lastDate, nextDate) > 52) {
     nextDate = addWeeks(nextDate, 1)
   }
 
-  let firstRowDates: Contrib[] = []
-  const graphEntries: Contrib[][] = []
   const getContrib = (date: string) => (isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date))
 
-  while (!isAfter(nextDate, lastDate)) {
-    const date = format(nextDate, DATE_FORMAT)
-    firstRowDates.push({ date, ...getContrib(date) })
-    nextDate = addWeeks(nextDate, 1)
-  }
-  graphEntries.push(firstRowDates)
-
-  for (let i = 1; i < 7; i += 1) {
-    graphEntries.push(
-      firstRowDates.map(dateObj => {
-        const date = format(setDay(parseISO(dateObj.date), i), DATE_FORMAT)
-        return { date, ...getContrib(date) }
-      })
-    )
-  }
+  const graphEntries = Array.from({ length: 53 }).map(() =>
+    Array.from({ length: 7 }).map(() => {
+      const date = format(nextDate, DATE_FORMAT)
+      if (isAfter(nextDate, lastDate)) return { date }
+      nextDate = addDays(nextDate, 1)
+      return { date, ...getContrib(date) }
+    })
+  )
 
   const count = getContributionCount(graphEntries)
   return <Canvas data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />

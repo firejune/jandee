@@ -39,31 +39,27 @@ export default async function ChartPage({
     data: { contributions },
   } = await getData<DataStruct>(`${HOST}/api/v1/${username}?v=${token}`)
 
-  const today = new Date(new Date().toLocaleString('en', { timeZone }))
-  let nextDate = startOfWeek(addMonths(today, -12))
-  if (differenceInCalendarWeeks(today, nextDate) > 52) {
+  const lastDate = new Date(new Date().toLocaleString('en', { timeZone }))
+  let nextDate = startOfWeek(addMonths(lastDate, -12))
+  if (differenceInCalendarWeeks(lastDate, nextDate) > 52) {
     nextDate = addWeeks(nextDate, 1)
   }
 
   const graphEntries = Array.from({ length: 53 }).map(() =>
     Array.from({ length: 7 }).map(() => {
-      if (isAfter(nextDate, today)) return null
+      if (isAfter(nextDate, lastDate)) return null
       const date = format(nextDate, DATE_FORMAT)
       nextDate = addDays(nextDate, 1)
-      return getDateContrib(contributions, date) as Contrib
+      return getDateContrib(contributions, date) || null
     })
   )
 
-  return <Chart graph={graphEntries} scheme={searchParams.scheme} />
+  return <Chart data={graphEntries} scheme={searchParams.scheme} />
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
   const res = await fetch(url)
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
-  }
-
+  if (!res.ok) throw new Error('Failed to fetch data')
   const data = await res.json()
   return { data }
 }

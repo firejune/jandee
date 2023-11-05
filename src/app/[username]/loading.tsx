@@ -18,5 +18,5 @@ export default async function ChartPage() {
       return {} as Contrib
     })
   ))
-  return <Chart graph={graphEntries} />
+  return <Chart data={graphEntries} />
 }
