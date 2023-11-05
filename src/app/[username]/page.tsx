@@ -37,7 +37,6 @@ export default async function ChartPage({
 }: PageProps) {
   const force = searchParams.v || `${Date.now()}`.substring(0, 8)
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${username}${force ? `?v=${force}` : ''}`)
-
   const presentDate = new Date(new Date().toLocaleString('en', { timeZone }))
   let pastDate = startOfWeek(addMonths(presentDate, -12))
   if (differenceInCalendarWeeks(presentDate, pastDate) > 52) {

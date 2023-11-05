@@ -19,10 +19,11 @@ const boxSize = 10
 const boxMargin = 3
 const canvasMargin = 2
 const borderRadius = 2
-const textHeight = 13
+const textSize = 10
+const textHeight = textSize + boxMargin
 const textWidth = 26
 const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
-const fontSize = '0.66em'
+const fontSize = `${textSize}px`
 
 const Chart = ({ data = [], scheme }: ChartProps) => {
   const height = yearHeight + canvasMargin + 12
