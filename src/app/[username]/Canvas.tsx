@@ -14,12 +14,13 @@ type ChartProps = {
   scheme?: 'light' | 'dark'
 }
 
-const boxWidth = 10
+const boxSize = 10
 const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
 const canvasMargin = 2
-const yearHeight = textHeight + (boxWidth + boxMargin) * 8 + canvasMargin
+const borderRadius = 2
+const yearHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
 const scaleFactor = 2
 
 const Canvas = ({ data, username, count, scheme }: ChartProps) => {
@@ -28,7 +29,7 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
   const [url, setUrl] = useState('/empty.png')
   const [scale, setScale] = useState(1)
   const height = yearHeight + canvasMargin + 5
-  const width = data.length * (boxWidth + boxMargin) + canvasMargin
+  const width = data.length * (boxSize + boxMargin) + canvasMargin
   const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
 
   useEffect(() => {
@@ -61,10 +62,10 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
         {data.map((week, x) => (
           <Fragment key={x}>
             {week.map((day, y) => {
-              const left = canvasMargin + (boxWidth + boxMargin) * x
-              const top = canvasMargin + textHeight + (boxWidth + boxMargin) * y
+              const left = canvasMargin + (boxSize + boxMargin) * x
+              const top = canvasMargin + textHeight + (boxSize + boxMargin) * y
               const starts = [left * scale, top * scale]
-              const ends = [(left + 10) * scale, (top + 10) * scale]
+              const ends = [(left + boxSize) * scale, (top + boxSize) * scale]
               return (
                 day.intensity && (
                   <area
@@ -92,10 +93,7 @@ interface Options {
   footerText?: string
 }
 
-function drawGraph(
-  ctx: CanvasRenderingContext2D,
-  { count, username, data: graphEntries, fontFace = defaultFontFace }: Options
-) {
+function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontFace = defaultFontFace }: Options) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
   ctx.textBaseline = 'bottom'
@@ -113,32 +111,32 @@ function drawGraph(
   }
 
   let themeGrades = 5
-  const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
-  ctx.fillText('Less', width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55, yearHeight + 5)
+  const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
+  ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 55, yearHeight + 5)
   ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
 
   for (let x = 0; x < 5; x += 1) {
     ctx.beginPath()
     ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
     ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-    ctx.roundRect(width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 29, yearHeight - 7, 10, 10, 2)
+    ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 29, yearHeight - 7, 10, 10, 2)
     ctx.fill()
     ctx.stroke()
     themeGrades -= 1
   }
 
-  for (let x = 0; x < graphEntries.length; x += 1) {
-    for (let y = 0; y < graphEntries[x].length; y += 1) {
-      const day = graphEntries[x][y]
+  for (let x = 0; x < data.length; x += 1) {
+    for (let y = 0; y < data[x].length; y += 1) {
+      const day = data[x][y]
       ctx.beginPath()
       ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
       ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg`)
       ctx.roundRect(
-        canvasMargin + (boxWidth + boxMargin) * x,
-        canvasMargin + textHeight + (boxWidth + boxMargin) * y,
-        10,
-        10,
-        2
+        canvasMargin + (boxSize + boxMargin) * x,
+        canvasMargin + textHeight + (boxSize + boxMargin) * y,
+        boxSize,
+        boxSize,
+        borderRadius
       )
       ctx.fill()
       ctx.stroke()
@@ -148,14 +146,14 @@ function drawGraph(
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
   ctx.fillStyle = getStyle('--color-text-default')
-  for (let x = 0; x < graphEntries.length; x += 1) {
-    const date = parseISO(graphEntries[x][0].date)
+  for (let x = 0; x < data.length; x += 1) {
+    const date = parseISO(data[x][0].date)
     const month = getMonth(date) + 1
-    const nextMonth = graphEntries[x + 1] ? getMonth(parseISO(graphEntries[x + 1][0].date)) + 1 : 0
+    const nextMonth = data[x + 1] ? getMonth(parseISO(data[x + 1][0].date)) + 1 : 0
     const firstMonthIsLast = x === 0 && month !== nextMonth
-    const laistMonthIsDiff = x === graphEntries.length - 1 && month !== lastCountedMonth
+    const laistMonthIsDiff = x === data.length - 1 && month !== lastCountedMonth
     if (month !== lastCountedMonth && !firstMonthIsLast && !laistMonthIsDiff) {
-      ctx.fillText(format(date, 'MMM'), canvasMargin + (boxWidth + boxMargin) * x, canvasMargin)
+      ctx.fillText(format(date, 'MMM'), canvasMargin + (boxSize + boxMargin) * x, canvasMargin)
       lastCountedMonth = month
     }
   }

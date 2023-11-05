@@ -15,17 +15,18 @@ type ChartProps = {
   scheme?: 'light' | 'dark'
 }
 
-const boxWidth = 10
+const boxSize = 10
 const boxMargin = 3
 const canvasMargin = 2
+const borderRadius = 2
 const textHeight = 13
-const textWidth = 24
-const yearHeight = textHeight + (boxWidth + boxMargin) * 7 + canvasMargin
+const textWidth = 26
+const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = '0.66em'
 
 const Chart = ({ data = [], scheme }: ChartProps) => {
   const height = yearHeight + canvasMargin + 12
-  const width = data.length * (boxWidth + boxMargin) + canvasMargin * 2 + textWidth
+  const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
   let lastCountedMonth = 0
 
   return (
@@ -37,18 +38,17 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
       style={{ background: 'transparent' }}
     >
       <g transform="translate(10, 20)">
-        <g transform="translate(56, 0)">
+        <g transform="translate(20, 0)">
           {data.map((week, x) => (
-            <g key={`week-${x}`} transform={`translate(${(boxWidth + boxMargin) * x}, 0)`}>
+            <g key={`week-${x}`} transform={`translate(${(boxSize + boxMargin) * x}, 0)`}>
               {week.map((day, y) => (
                 <rect
                   key={`rect-${y}`}
-                  width="10"
-                  height="10"
-                  x="-37"
-                  y={(boxWidth + boxMargin) * y}
-                  rx="2"
-                  ry="2"
+                  width={boxSize}
+                  height={boxSize}
+                  y={(boxSize + boxMargin) * y}
+                  rx={borderRadius}
+                  ry={borderRadius}
                   fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
                   stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
                 >
@@ -59,7 +59,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
           ))}
         </g>
 
-        <g transform="translate(20, 0)">
+        <g transform="translate(20, -6)">
           {data.map((week, x) => {
             const date = parseISO(week[0].date)
             const month = getMonth(date) + 1
@@ -71,8 +71,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
               return (
                 <text
                   key={`month-${x}`}
-                  x={`${x * (boxWidth + boxMargin)}`}
-                  y="-6"
+                  x={`${x * (boxSize + boxMargin)}`}
                   fill="var(--color-text-default)"
                   style={{ fontSize }}
                 >
