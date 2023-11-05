@@ -3,11 +3,11 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/api/v1',
+        source: '/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'private, max-age=900, stale-while-revalidate=3600',
+            value: 's-maxage=10, stale-while-revalidate=59',
           },
         ],
       },
