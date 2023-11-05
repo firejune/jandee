@@ -2,12 +2,12 @@ import format from 'date-fns/format'
 import startOfWeek from 'date-fns/startOfWeek'
 import isAfter from 'date-fns/isAfter'
 import addMonths from 'date-fns/addMonths'
+import addWeeks from 'date-fns/addWeeks'
 import addDays from 'date-fns/addDays'
 import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Chart, { Contrib } from './Chart'
 import Canvas from './Canvas'
-import { addWeeks } from 'date-fns'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -55,21 +55,23 @@ export default async function ChartPage({
     })
   )
 
-  const count = getContributionCount(graphEntries)
-  return (
-    <>
-      {element === 'canvas' ? (
-        <Canvas data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
-      ) : (
-        <Chart data={graphEntries} scheme={searchParams.scheme} />
-      )}
-    </>
+  return element === 'canvas' ? (
+    <Canvas
+      data={graphEntries}
+      count={getContributionCount(graphEntries)}
+      username={username}
+      scheme={searchParams.scheme}
+    />
+  ) : (
+    <Chart data={graphEntries} scheme={searchParams.scheme} />
   )
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
   const res = await fetch(url)
-  if (!res.ok) throw new Error('Failed to fetch data')
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
   const data = await res.json()
   return { data }
 }
