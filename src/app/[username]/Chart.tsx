@@ -5,12 +5,12 @@ import format from 'date-fns/format'
 
 export type Contrib = {
   date: string
-  count: number
-  intensity: string
+  count?: number
+  intensity?: string
 }
 
 type ChartProps = {
-  data?: (Contrib | null)[][]
+  data?: Contrib[][]
   scheme?: 'light' | 'dark'
 }
 
@@ -28,7 +28,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
             <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
               {contribs.map(
                 (contrib, day) =>
-                  contrib && (
+                  contrib.count !== undefined && (
                     <rect
                       key={`rect-${day}`}
                       width="10"

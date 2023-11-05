@@ -5,11 +5,7 @@ import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import parseISO from 'date-fns/parseISO'
 
-export interface Contrib {
-  date: string
-  count?: number
-  intensity?: number
-}
+import type { Contrib } from './Chart'
 
 const boxWidth = 10
 const boxMargin = 2
@@ -140,9 +136,9 @@ function drawGraph(
     themeGrades -= 1
   }
 
-  for (let y = 0; y < graphEntries.length; y += 1) {
-    for (let x = 0; x < graphEntries[y].length; x += 1) {
-      const day = graphEntries[y][x]
+  for (let x = 0; x < graphEntries.length; x += 1) {
+    for (let y = 0; y < graphEntries[x].length; y += 1) {
+      const day = graphEntries[x][y]
       if (!day.intensity) continue
       ctx.beginPath()
       ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
@@ -156,15 +152,15 @@ function drawGraph(
   let lastCountedMonth = 0
   ctx.textBaseline = 'hanging'
   ctx.fillStyle = getStyle('--color-text-default')
-  for (let y = 0; y < graphEntries[0].length; y += 1) {
-    const date = parseISO(graphEntries[0][y].date)
+  for (let x = 0; x < graphEntries.length; x += 1) {
+    const date = parseISO(graphEntries[x][0].date)
     const month = getMonth(date) + 1
-    const nextMonth = getMonth(parseISO(graphEntries[0][y + 1]?.date)) + 1
-    const firstMonthIsLast = y === 0 && month !== nextMonth
-    const laistMonthIsDiff = y === graphEntries[0].length - 1 && month !== lastCountedMonth
+    const nextMonth = graphEntries[x + 1] ? getMonth(parseISO(graphEntries[x + 1][0].date)) + 1 : 0
+    const firstMonthIsLast = x === 0 && month !== nextMonth
+    const laistMonthIsDiff = x === graphEntries.length - 1 && month !== lastCountedMonth
     const monthChanged = month !== lastCountedMonth
     if (monthChanged && !firstMonthIsLast && !laistMonthIsDiff) {
-      ctx.fillText(format(date, 'MMM'), offsetX + (boxWidth + boxMargin) * y, offsetY)
+      ctx.fillText(format(date, 'MMM'), offsetX + (boxWidth + boxMargin) * x, offsetY)
       lastCountedMonth = month
     }
   }

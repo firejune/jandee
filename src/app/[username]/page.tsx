@@ -6,6 +6,7 @@ import addDays from 'date-fns/addDays'
 import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Chart, { Contrib } from './Chart'
+import Canvas from './Canvas'
 import { addWeeks } from 'date-fns'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
@@ -26,12 +27,12 @@ type DataStruct = {
 }
 
 type PageProps = {
-  params: { username: string }
+  params: { username: string; element: 'svg' | 'canvas' }
   searchParams: { scheme: 'light' | 'dark'; tz: string; v: string }
 }
 
 export default async function ChartPage({
-  params: { username },
+  params: { username, element },
   searchParams: { tz: timeZone = 'Asia/Seoul', ...searchParams },
 }: PageProps) {
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
@@ -47,14 +48,23 @@ export default async function ChartPage({
 
   const graphEntries = Array.from({ length: 53 }).map(() =>
     Array.from({ length: 7 }).map(() => {
-      if (isAfter(nextDate, lastDate)) return null
       const date = format(nextDate, DATE_FORMAT)
+      if (isAfter(nextDate, lastDate)) return { date }
       nextDate = addDays(nextDate, 1)
-      return getDateContrib(contributions, date) || null
+      return { date, ...getDateContrib(contributions, date) }
     })
   )
 
-  return <Chart data={graphEntries} scheme={searchParams.scheme} />
+  const count = getContributionCount(graphEntries)
+  return (
+    <>
+      {element === 'canvas' ? (
+        <Canvas data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
+      ) : (
+        <Chart data={graphEntries} scheme={searchParams.scheme} />
+      )}
+    </>
+  )
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
@@ -66,4 +76,10 @@ async function getData<T>(url: string): Promise<{ data: T }> {
 
 function getDateContrib(contributions: Contrib[], date: string) {
   return contributions.find(contrib => contrib.date === date)
+}
+
+function getContributionCount(graphEntries: Contrib[][]) {
+  return graphEntries.reduce((rowTotal, row) => {
+    return rowTotal + row.reduce((colTotal, col) => colTotal + (col.count || 0), 0)
+  }, 0)
 }
