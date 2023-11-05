@@ -67,14 +67,14 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
               const starts = [left * scale, top * scale]
               const ends = [(left + boxSize) * scale, (top + boxSize) * scale]
               return (
-                day.intensity && (
-                  <area
-                    key={y}
-                    shape="rect"
-                    coords={`${starts.join(',')}, ${ends.join(',')}`}
-                    title={`${day.date}(${format(parseISO(day.date), 'EEE')}) / ${day.count || '0'}`}
-                  />
-                )
+                <area
+                  key={y}
+                  href={`https://github.com/${username}?from=${day.date}&to=${day.date}&tab=overview`}
+                  target="github.com"
+                  shape="rect"
+                  coords={`${starts.join(',')}, ${ends.join(',')}`}
+                  title={`${day.date}(${format(parseISO(day.date), 'EEE')}) / ${day.count || '0'}`}
+                />
               )
             })}
           </Fragment>
