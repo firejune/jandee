@@ -21,12 +21,12 @@ const canvasMargin = 2
 const borderRadius = 2
 const textSize = 10
 const textHeight = textSize + boxMargin
-const textWidth = 26
+const textWidth = 28
 const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = `${textSize}px`
 
 const Chart = ({ data = [], scheme }: ChartProps) => {
-  const height = yearHeight + canvasMargin + 12
+  const height = yearHeight + canvasMargin * 2
   const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
   let lastCountedMonth = 0
 
@@ -38,8 +38,8 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
       viewBox={`0 0 ${width} ${height}`}
       style={{ background: 'transparent' }}
     >
-      <g transform="translate(10, 20)">
-        <g transform="translate(20, 0)">
+      <g transform={`translate(${canvasMargin}, ${canvasMargin})`}>
+        <g transform={`translate(${textWidth}, ${textHeight + boxMargin})`}>
           {data.map((week, x) => (
             <g key={`week-${x}`} transform={`translate(${(boxSize + boxMargin) * x}, 0)`}>
               {week.map((day, y) => (
@@ -60,7 +60,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
           ))}
         </g>
 
-        <g transform="translate(20, -6)">
+        <g transform={`translate(${textWidth}, 10)`}>
           {data.map((week, x) => {
             const date = parseISO(week[0].date)
             const month = getMonth(date) + 1
@@ -84,7 +84,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
           })}
         </g>
 
-        <g transform="translate(-9, 9)">
+        <g transform={`translate(0, ${textHeight + boxMargin + 10})`}>
           {data[0].map((day, y) => (
             <text
               key={`weekday-${y}`}
