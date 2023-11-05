@@ -26,17 +26,20 @@ type DataStruct = {
 }
 
 type PageProps = {
-  params: { username: string }
+  params: { username: string; tz: string }
   searchParams: { scheme: 'light' | 'dark'; v: string }
 }
 
-export default async function ChartPage({ params, searchParams }: PageProps) {
+export default async function ChartPage({
+  params: { username, tz: timeZone = 'Asia/Seoul' },
+  searchParams,
+}: PageProps) {
   const token = searchParams.v || `${Date.now()}`.substring(0, 8)
   const {
     data: { contributions },
-  } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
+  } = await getData<DataStruct>(`${HOST}/api/v1/${username}?v=${token}`)
 
-  const today = new Date()
+  const today = new Date(new Date().toLocaleString('en', { timeZone }))
   let nextDate = startOfWeek(addMonths(today, -12))
   if (differenceInCalendarWeeks(today, nextDate) > 52) {
     nextDate = addWeeks(nextDate, 1)
