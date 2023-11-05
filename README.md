@@ -19,6 +19,14 @@ You can change the color using the `scheme` parameter. Values include `light` an
 https://jandee.vercel.app/%USERNAME%?scheme=dark
 ```
 
+#### How to change time zone
+
+You can set the timezone.
+
+```
+https://jandee.vercel.app/%USERNAME%?tz=America/New_York
+```
+
 #### Drawing using canvas
 
 Basically, charts are created using SVG. You can use Canvas as an alternative. The difference from the SVG version is that it shows the total count and not the day of the week.
