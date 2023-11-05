@@ -22,7 +22,7 @@ const borderRadius = 2
 const textHeight = 13
 const textWidth = 28 + boxMargin
 const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
-const fontSize = '12px'
+const fontSize = '10px'
 
 const Chart = ({ data = [], scheme }: ChartProps) => {
   const height = yearHeight + canvasMargin * 2
