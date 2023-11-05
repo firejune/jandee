@@ -35,7 +35,7 @@ export default async function ChartPage({
   params: { username, element },
   searchParams: { tz: timeZone = 'Asia/Seoul', ...searchParams },
 }: PageProps) {
-  const force = searchParams.v // || `${Date.now()}`.substring(0, 8)
+  const force = searchParams.v || `${Date.now()}`.substring(0, 8)
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${username}${force ? `?v=${force}` : ''}`)
 
   const presentDate = new Date(new Date().toLocaleString('en', { timeZone }))
