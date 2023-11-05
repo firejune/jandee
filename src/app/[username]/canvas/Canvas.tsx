@@ -88,7 +88,6 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
         ))}
       </map>
       <canvas data-color-mode={scheme} ref={canvasRef} hidden />
-      <span hidden>{new Date().toString()}</span>
     </>
   )
 }
