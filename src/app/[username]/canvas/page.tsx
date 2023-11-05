@@ -12,17 +12,17 @@ const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
 
 interface Year {
-  year: string;
-  total: number;
+  year: string
+  total: number
   range: {
-    start: string;
-    end: string;
-  };
+    start: string
+    end: string
+  }
 }
 
 interface DataStruct {
-  years: Year[];
-  contributions: Contrib[];
+  years: Year[]
+  contributions: Contrib[]
 }
 
 type PageProps = {
@@ -35,17 +35,15 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
   const { data } = await getData<DataStruct>(`${HOST}/api/v1/${params.username}?v=${token}`)
 
   const today = new Date()
-  const end = format(today, DATE_FORMAT)
-  const start = format(addMonths(today, -12), DATE_FORMAT)
 
-  const lastDate = parseISO(end)
-  const firstRealDate = parseISO(start)
+  const lastDate = today
+  const firstRealDate = addMonths(today, -12)
   const firstDate = startOfWeek(firstRealDate)
 
   let nextDate = firstDate
   const firstRowDates: Contrib[] = []
   const graphEntries: Contrib[][] = []
-  const getContrib = (date: string) => isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date)
+  const getContrib = (date: string) => (isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date))
 
   while (!isAfter(nextDate, lastDate)) {
     const date = format(nextDate, DATE_FORMAT)
@@ -63,10 +61,8 @@ export default async function CanvasPage({ params, searchParams }: PageProps) {
     )
   }
 
-  const count = new Intl.NumberFormat().format(getContributionCount(graphEntries))
-  return (
-    <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
-  )
+  const count = getContributionCount(graphEntries)
+  return <Canvas data={graphEntries} count={count} username={params.username} scheme={searchParams.scheme} />
 }
 
 async function getData<T>(url: string): Promise<{ data: T }> {
@@ -82,9 +78,6 @@ function getDateInfo(data: DataStruct, date: string) {
 
 function getContributionCount(graphEntries: Contrib[][]) {
   return graphEntries.reduce((rowTotal, row) => {
-    return (
-      rowTotal +
-      row.reduce((colTotal, col) => colTotal + (col.count || 0), 0)
-    )
+    return rowTotal + row.reduce((colTotal, col) => colTotal + (col.count || 0), 0)
   }, 0)
 }

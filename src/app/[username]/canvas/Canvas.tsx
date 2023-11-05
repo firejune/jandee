@@ -21,8 +21,8 @@ const scaleFactor = 3
 
 type ChartProps = {
   data: Contrib[][]
-  count?: string
-  username?: string
+  count: number
+  username: string
   scheme?: 'light' | 'dark'
 }
 
@@ -53,7 +53,7 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
         ...{ username, count },
         offsetX: canvasMargin,
         offsetY: canvasMargin,
-        data
+        data,
       })
 
       setUrl(canvas.toDataURL())
@@ -93,8 +93,8 @@ const Canvas = ({ data, username, count, scheme }: ChartProps) => {
 }
 
 interface Options {
-  count?: string
-  username?: string
+  count: number
+  username: string
   data: Contrib[][]
   fontFace?: string
   footerText?: string
@@ -105,14 +105,10 @@ interface DrawYearOptions extends Options {
   offsetY?: number
 }
 
-function drawGraph(ctx: CanvasRenderingContext2D, {
-  count,
-  username,
-  offsetX = 0,
-  offsetY = 0,
-  data: graphEntries,
-  fontFace = defaultFontFace
-}: DrawYearOptions) {
+function drawGraph(
+  ctx: CanvasRenderingContext2D,
+  { count, username, offsetX = 0, offsetY = 0, data: graphEntries, fontFace = defaultFontFace }: DrawYearOptions
+) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
   ctx.textBaseline = 'bottom'
@@ -121,7 +117,9 @@ function drawGraph(ctx: CanvasRenderingContext2D, {
 
   if (username && count) {
     ctx.fillText(
-      `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
+      `${new Intl.NumberFormat().format(count)} contribution${
+        count === 1 ? '' : 's'
+      } in the last year by @${username} on GitHub`,
       canvasMargin,
       yearHeight + 5
     )
@@ -129,24 +127,14 @@ function drawGraph(ctx: CanvasRenderingContext2D, {
 
   let themeGrades = 5
   const width = 53 * (boxWidth + boxMargin) + canvasMargin * 2
-  ctx.fillText(
-    'Less',
-    width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55,
-    yearHeight + 5
-  )
+  ctx.fillText('Less', width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 55, yearHeight + 5)
   ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
 
   for (let x = 0; x < 5; x += 1) {
     ctx.beginPath()
     ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
     ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-    ctx.roundRect(
-      width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27,
-      yearHeight - 5,
-      10,
-      10,
-      2
-    )
+    ctx.roundRect(width - canvasMargin - (boxWidth + boxMargin) * themeGrades - 27, yearHeight - 5, 10, 10, 2)
     ctx.fill()
     ctx.stroke()
     themeGrades -= 1
@@ -159,13 +147,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, {
       ctx.beginPath()
       ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
       ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg`)
-      ctx.roundRect(
-        offsetX + (boxWidth + boxMargin) * x,
-        offsetY + textHeight + (boxWidth + boxMargin) * y,
-        10,
-        10,
-        2
-      )
+      ctx.roundRect(offsetX + (boxWidth + boxMargin) * x, offsetY + textHeight + (boxWidth + boxMargin) * y, 10, 10, 2)
       ctx.fill()
       ctx.stroke()
     }
@@ -181,11 +163,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, {
     const firstMonthIsLast = y === 0 && month !== nextMonth
     const monthChanged = month !== lastCountedMonth
     if (monthChanged && !firstMonthIsLast) {
-      ctx.fillText(
-        format(date, 'MMM'),
-        offsetX + (boxWidth + boxMargin) * y,
-        offsetY
-      )
+      ctx.fillText(format(date, 'MMM'), offsetX + (boxWidth + boxMargin) * y, offsetY)
       lastCountedMonth = month
     }
   }

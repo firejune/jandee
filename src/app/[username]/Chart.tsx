@@ -26,21 +26,24 @@ const Chart = ({ graph = [], scheme }: ChartProps) => {
         <g transform="translate(56, 0)">
           {graph.map((contribs, week) => (
             <g key={`week-${week}`} transform={`translate(${week * 14}, 0)`}>
-              {contribs.map((contrib, day) => contrib && (
-                  <rect
-                    key={`rect-${day}`}
-                    width="10"
-                    height="10"
-                    x="-37"
-                    y={13 * day}
-                    rx="2"
-                    ry="2"
-                    fill={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}bg)`}
-                    stroke={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}border)`}
-                  >
-                    <title>{`${contrib.date} / ${contrib.count || '0'}`}</title>
-                  </rect>
-                ))}
+              {contribs.map(
+                (contrib, day) =>
+                  contrib && (
+                    <rect
+                      key={`rect-${day}`}
+                      width="10"
+                      height="10"
+                      x="-37"
+                      y={13 * day}
+                      rx="2"
+                      ry="2"
+                      fill={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}bg)`}
+                      stroke={`var(--color-calendar-graph-day-${contrib.count ? `L${contrib.intensity}-` : ''}border)`}
+                    >
+                      <title>{`${contrib.date || ''} / ${contrib.count || '0'}`}</title>
+                    </rect>
+                  )
+              )}
             </g>
           ))}
         </g>
