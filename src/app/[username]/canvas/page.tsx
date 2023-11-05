@@ -1,4 +1,4 @@
-import addDays from 'date-fns/addDays'
+import setDay from 'date-fns/setDay'
 import addWeeks from 'date-fns/addWeeks'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
@@ -44,16 +44,25 @@ export default async function CanvasPage({
     nextDate = addWeeks(nextDate, 1)
   }
 
+  let firstRowDates: Contrib[] = []
+  const graphEntries: Contrib[][] = []
   const getContrib = (date: string) => (isAfter(parseISO(date), lastDate) ? {} : getDateInfo(data, date))
 
-  const graphEntries = Array.from({ length: 53 }).map(() =>
-    Array.from({ length: 7 }).map(() => {
-      const date = format(nextDate, DATE_FORMAT)
-      if (isAfter(nextDate, lastDate)) return { date }
-      nextDate = addDays(nextDate, 1)
-      return { date, ...getContrib(date) }
-    })
-  )
+  while (!isAfter(nextDate, lastDate)) {
+    const date = format(nextDate, DATE_FORMAT)
+    firstRowDates.push({ date, ...getContrib(date) })
+    nextDate = addWeeks(nextDate, 1)
+  }
+  graphEntries.push(firstRowDates)
+
+  for (let i = 1; i < 7; i += 1) {
+    graphEntries.push(
+      firstRowDates.map(dateObj => {
+        const date = format(setDay(parseISO(dateObj.date), i), DATE_FORMAT)
+        return { date, ...getContrib(date) }
+      })
+    )
+  }
 
   const count = getContributionCount(graphEntries)
   return <Canvas data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
