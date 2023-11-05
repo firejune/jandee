@@ -35,23 +35,21 @@ export default async function ChartPage({
   params: { username, element },
   searchParams: { tz: timeZone = 'Asia/Seoul', ...searchParams },
 }: PageProps) {
-  const token = searchParams.v || `${Date.now()}`.substring(0, 8)
-  const {
-    data: { contributions },
-  } = await getData<DataStruct>(`${HOST}/api/v1/${username}?v=${token}`)
+  const force = searchParams.v // || `${Date.now()}`.substring(0, 8)
+  const { data } = await getData<DataStruct>(`${HOST}/api/v1/${username}${force ? `?v=${force}` : ''}`)
 
-  const lastDate = new Date(new Date().toLocaleString('en', { timeZone }))
-  let nextDate = startOfWeek(addMonths(lastDate, -12))
-  if (differenceInCalendarWeeks(lastDate, nextDate) > 52) {
-    nextDate = addWeeks(nextDate, 1)
+  const presentDate = new Date(new Date().toLocaleString('en', { timeZone }))
+  let pastDate = startOfWeek(addMonths(presentDate, -12))
+  if (differenceInCalendarWeeks(presentDate, pastDate) > 52) {
+    pastDate = addWeeks(pastDate, 1)
   }
 
   const graphEntries = Array.from({ length: 53 }).map(() =>
     Array.from({ length: 7 }).map(() => {
-      const date = format(nextDate, DATE_FORMAT)
-      if (isAfter(nextDate, lastDate)) return { date }
-      nextDate = addDays(nextDate, 1)
-      return { date, ...getDateContrib(contributions, date) }
+      const date = format(pastDate, DATE_FORMAT)
+      if (isAfter(pastDate, presentDate)) return { date }
+      pastDate = addDays(pastDate, 1)
+      return { date, ...getDateContrib(data, date) }
     })
   )
 
@@ -76,8 +74,8 @@ async function getData<T>(url: string): Promise<{ data: T }> {
   return { data }
 }
 
-function getDateContrib(contributions: Contrib[], date: string) {
-  return contributions.find(contrib => contrib.date === date)
+function getDateContrib(data: DataStruct, date: string) {
+  return data.contributions.find(contrib => contrib.date === date)
 }
 
 function getContributionCount(graphEntries: Contrib[][]) {
