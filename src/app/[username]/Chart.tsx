@@ -17,11 +17,11 @@ type ChartProps = {
 
 const boxSize = 10
 const boxMargin = 3
-const canvasMargin = 2
+const canvasMargin = 3
 const borderRadius = 2
 const textSize = 10
 const textHeight = textSize + boxMargin
-const textWidth = 28
+const textWidth = 28 + boxMargin
 const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = `${textSize}px`
 
@@ -84,7 +84,7 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
           })}
         </g>
 
-        <g transform={`translate(0, ${textHeight + boxMargin + 10})`}>
+        <g transform={`translate(0, ${textHeight + boxMargin + 8})`}>
           {data[0].map((day, y) => (
             <text
               key={`weekday-${y}`}
