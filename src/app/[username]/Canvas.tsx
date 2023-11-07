@@ -14,6 +14,9 @@ const defaultBoxMargin = 3
 const defaultBorderRadius = 2
 const scaleFactor = 3
 
+const empty =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+
 const Canvas = ({
   data,
   username,
@@ -22,8 +25,7 @@ const Canvas = ({
   options: { boxMargin = defaultBoxMargin, showWeekDays = true, showFooter = true, ...options } = {},
 }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imgRef = useRef<HTMLImageElement>(null)
-  const [url, setUrl] = useState(`/canvas-loading-${scheme}.png`)
+  const [url, setUrl] = useState(empty)
   const [scale, setScale] = useState(1)
 
   const textWidth = showWeekDays ? 28 + boxMargin : 0
@@ -31,7 +33,7 @@ const Canvas = ({
   const graphHeight = footerHeight + (boxSize + boxMargin) * 8 + canvasMargin
   const height = graphHeight + canvasMargin + 5
   const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
-  const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
+  const handleResize = () => canvasRef.current && setScale(canvasRef.current.offsetWidth / width)
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -58,12 +60,13 @@ const Canvas = ({
 
   return (
     <>
-      <img useMap="#info" width={width} height={height} src={url} alt="" ref={imgRef} />
+      <img useMap="#info" width={width} height={height} src={url} alt="" />
+
       <map name="info">
         {data.map((week, x) => (
           <Fragment key={x}>
             {week.map((day, y) => {
-              const left = canvasMargin + (boxSize + boxMargin) * x
+              const left = canvasMargin + textWidth + (boxSize + boxMargin) * x
               const top = canvasMargin + textHeight + (boxSize + boxMargin) * y
               const starts = [left * scale, top * scale]
               const ends = [(left + boxSize) * scale, (top + boxSize) * scale]

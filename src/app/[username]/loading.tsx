@@ -12,7 +12,6 @@ import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 const FALSY = ['0', 'false', 'hide', 'hidden', 'none']
 const DATE_FORMAT = 'yyyy-MM-dd'
 import Chart, { Contrib } from './Chart'
-import Canvas from './Canvas'
 
 export default function ChartPage() {
   const params = useParams()
@@ -43,9 +42,8 @@ export default function ChartPage() {
     ...(searchParams.get('margin') ? { boxMargin: Number(searchParams.get('margin')) } : {}),
   }
 
-  const Element = params.element === 'canvas' ? Canvas : Chart
   return (
-    <Element
+    <Chart
       data={graphEntries}
       username={params.username as string}
       scheme={searchParams.get('scheme') as 'light' | 'dark'}
