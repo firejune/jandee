@@ -25,6 +25,7 @@ const Canvas = ({
   options: { boxMargin = defaultBoxMargin, showWeekDays = true, showFooter = true, ...options } = {},
 }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
   const [url, setUrl] = useState(empty)
   const [scale, setScale] = useState(1)
 
@@ -33,7 +34,7 @@ const Canvas = ({
   const graphHeight = footerHeight + (boxSize + boxMargin) * 8 + canvasMargin
   const height = graphHeight + canvasMargin + 5
   const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
-  const handleResize = () => canvasRef.current && setScale(canvasRef.current.offsetWidth / width)
+  const handleResize = () => imageRef.current && setScale(imageRef.current.offsetWidth / width)
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -60,7 +61,7 @@ const Canvas = ({
 
   return (
     <>
-      <img useMap="#info" width={width} height={height} src={url} alt="" />
+      <img useMap="#info" width={width} height={height} src={url} alt="" ref={imageRef} />
 
       <map name="info">
         {data.map((week, x) => (
