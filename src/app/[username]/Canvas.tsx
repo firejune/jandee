@@ -62,7 +62,6 @@ const Canvas = ({
   return (
     <>
       <img useMap="#info" width={width} height={height} src={url} alt="" ref={imageRef} />
-
       <map name="info">
         {data.map((week, x) => (
           <Fragment key={x}>
@@ -152,6 +151,17 @@ function drawGraph(
     }
   }
 
+  if (showWeekDays) {
+    for (let y = 0; y < data[0].length; y += 1) {
+      if (y % 2)
+        ctx.fillText(
+          format(parseISO(data[0][y].date), 'EEE'),
+          canvasMargin,
+          canvasMargin + textHeight * 2 + (boxSize + boxMargin) * y - 4
+        )
+    }
+  }
+
   for (let x = 0; x < data.length; x += 1) {
     for (let y = 0; y < data[x].length; y += 1) {
       const day = data[x][y]
@@ -185,17 +195,6 @@ function drawGraph(
         textHeight + canvasMargin - 2
       )
       lastCountedMonth = month
-    }
-  }
-
-  if (showWeekDays) {
-    for (let y = 0; y < data[0].length; y += 1) {
-      if (y % 2)
-        ctx.fillText(
-          format(parseISO(data[0][y].date), 'EEE'),
-          canvasMargin,
-          canvasMargin + textHeight * 2 + (boxSize + boxMargin) * y - 4
-        )
     }
   }
 }
