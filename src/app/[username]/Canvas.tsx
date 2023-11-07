@@ -22,7 +22,6 @@ type ChartProps = {
 
 const boxSize = 10
 const textHeight = 15
-const defaultFontFace = 'IBM Plex Mono'
 const canvasMargin = 2
 const defaultBoxMargin = 2
 const defaultBorderRadius = 2
@@ -33,15 +32,18 @@ const Canvas = ({
   username,
   count,
   scheme,
-  options: { boxMargin = defaultBoxMargin, ...options } = {},
+  options: { boxMargin = defaultBoxMargin, showWeekDays = true, showFooter = true, ...options } = {},
 }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const [url, setUrl] = useState(`/canvas-loading-${scheme}.png`)
   const [scale, setScale] = useState(1)
-  const graphHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
+
+  const textWidth = showWeekDays ? 28 + boxMargin : 0
+  const footerHeight = showFooter ? textHeight : 0
+  const graphHeight = footerHeight + (boxSize + boxMargin) * 8 + canvasMargin
   const height = graphHeight + canvasMargin + 5
-  const width = data.length * (boxSize + boxMargin) + canvasMargin
+  const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
   const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
 
   useEffect(() => {
@@ -56,10 +58,9 @@ const Canvas = ({
       }
 
       ctx.scale(scaleFactor, scaleFactor)
-      ctx.font = `11px '${defaultFontFace}'`
       ctx.textBaseline = 'bottom'
 
-      drawGraph(ctx, { count, username, data, boxMargin, graphHeight, ...options })
+      drawGraph(ctx, { count, username, data, boxMargin, graphHeight, textWidth, showWeekDays, showFooter, ...options })
       setUrl(canvas.toDataURL())
     }
 
@@ -86,7 +87,9 @@ const Canvas = ({
                   target="github.com"
                   shape="rect"
                   coords={`${starts.join(',')}, ${ends.join(',')}`}
-                  title={`${day.date}(${format(parseISO(day.date), 'EEE')}) / ${day.count || '0'}`}
+                  title={`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${
+                    day.count || '0'
+                  }`}
                 />
               )
             })}
@@ -104,10 +107,10 @@ interface Options {
   count?: string
   boxMargin: number
   borderRadius?: number
+  textWidth: number
   graphHeight: number
-  footerText?: string
-  showWeekDays?: boolean
-  showFooter?: boolean
+  showWeekDays: boolean
+  showFooter: boolean
 }
 
 function drawGraph(
@@ -118,32 +121,40 @@ function drawGraph(
     username,
     boxMargin,
     graphHeight,
+    textWidth,
     borderRadius = defaultBorderRadius,
-    showWeekDays = true,
-    showFooter = true,
+    showWeekDays,
+    showFooter,
   }: Options
 ) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
+  ctx.font = `10px '${getStyle('font-family')}'`
 
   if (showFooter) {
     ctx.fillStyle = getStyle('--color-text-default')
     if (count) {
       ctx.fillText(
         `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
-        canvasMargin,
-        graphHeight + 5
+        canvasMargin + textWidth,
+        graphHeight + 7
       )
     }
     let themeGrades = 5
     const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
-    ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 62, graphHeight + 5)
-    ctx.fillText('More', width - canvasMargin - 32, graphHeight + 5)
+    ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 62 + textWidth, graphHeight + 6)
+    ctx.fillText('More', width - canvasMargin - 32 + textWidth, graphHeight + 6)
 
     for (let x = 0; x < 5; x += 1) {
       ctx.beginPath()
       ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
       ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-      ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 36, graphHeight - 7, 10, 10, 2)
+      ctx.roundRect(
+        width - canvasMargin - (boxSize + boxMargin) * themeGrades - 36 + textWidth,
+        graphHeight - 6,
+        boxSize,
+        boxSize,
+        borderRadius
+      )
       ctx.fill()
       ctx.stroke()
       themeGrades -= 1
@@ -157,7 +168,7 @@ function drawGraph(
       ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
       ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg`)
       ctx.roundRect(
-        canvasMargin + (boxSize + boxMargin) * x,
+        canvasMargin + textWidth + (boxSize + boxMargin) * x,
         canvasMargin + textHeight + (boxSize + boxMargin) * y,
         boxSize,
         boxSize,
@@ -177,8 +188,23 @@ function drawGraph(
     const firstMonthIsLast = x === 0 && month !== nextMonth
     const laistMonthIsDiff = x === data.length - 1 && month !== lastCountedMonth
     if (month !== lastCountedMonth && !firstMonthIsLast && !laistMonthIsDiff) {
-      ctx.fillText(format(date, 'MMM'), canvasMargin + (boxSize + boxMargin) * x, textHeight + canvasMargin - 2)
+      ctx.fillText(
+        format(date, 'MMM'),
+        canvasMargin + textWidth + (boxSize + boxMargin) * x,
+        textHeight + canvasMargin - 2
+      )
       lastCountedMonth = month
+    }
+  }
+
+  if (showWeekDays) {
+    for (let y = 0; y < data[0].length; y += 1) {
+      if (y % 2)
+        ctx.fillText(
+          format(parseISO(data[0][y].date), 'EEE'),
+          canvasMargin,
+          canvasMargin + textHeight * 2 + (boxSize + boxMargin) * y - 4
+        )
     }
   }
 }
