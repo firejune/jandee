@@ -9,7 +9,7 @@ import type { Contrib } from './Chart'
 
 type ChartProps = {
   data: Contrib[][]
-  count: number
+  count: string
   username: string
   scheme?: 'light' | 'dark'
 }
@@ -86,7 +86,7 @@ const Graph = ({ data, username, count, scheme }: ChartProps) => {
 }
 
 interface Options {
-  count: number
+  count: string
   username: string
   data: Contrib[][]
   fontFace?: string
@@ -102,9 +102,7 @@ function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontF
 
   if (username && count) {
     ctx.fillText(
-      `${new Intl.NumberFormat().format(count)} contribution${
-        count === 1 ? '' : 's'
-      } in the last year by @${username} on GitHub`,
+      `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
       canvasMargin,
       graphHeight + 5
     )

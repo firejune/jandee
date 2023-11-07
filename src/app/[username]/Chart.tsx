@@ -11,6 +11,8 @@ export type Contrib = {
 }
 
 type ChartProps = {
+  count?: string
+  username?: string
   data?: Contrib[][]
   scheme?: 'light' | 'dark'
 }
@@ -21,12 +23,12 @@ const canvasMargin = 3
 const borderRadius = 2
 const textHeight = 13
 const textWidth = 28 + boxMargin
-const chartHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
+const chartHeight = textHeight * 2 + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = '10px'
 
-const Chart = ({ data = [], scheme }: ChartProps) => {
+const Chart = ({ data = [], username, count, scheme }: ChartProps) => {
   const height = chartHeight + canvasMargin * 2
-  const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
+  const width = data.length * (boxSize + boxMargin) + textWidth + canvasMargin
   let lastCountedMonth = 0
 
   return (
@@ -94,6 +96,48 @@ const Chart = ({ data = [], scheme }: ChartProps) => {
               {format(parseISO(day.date), 'EEE')}
             </text>
           ))}
+        </g>
+
+        {username && count && (
+          <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
+            <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
+              {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
+            </text>
+          </g>
+        )}
+
+        <g
+          transform={`translate(${data.length * (boxSize + boxMargin) - 93}, ${
+            chartHeight - textHeight - canvasMargin
+          })`}
+        >
+          <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
+            Less
+          </text>
+          <g transform={`translate(${textWidth - 2}, ${boxMargin + 2})`}>
+            {Array.from({ length: 5 }).map((_, intensity) => (
+              <rect
+                key={`regend-${intensity}`}
+                width={boxSize}
+                height={boxSize}
+                x={(boxSize + boxMargin) * intensity}
+                rx={borderRadius}
+                ry={borderRadius}
+                fill={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}bg)`}
+                stroke={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}border)`}
+              >
+                <title>i</title>
+              </rect>
+            ))}
+          </g>
+          <text
+            dx={textWidth + (boxSize + boxMargin) * 5}
+            dy={textHeight}
+            style={{ fontSize }}
+            fill="var(--color-text-default)"
+          >
+            More
+          </text>
         </g>
       </g>
     </svg>

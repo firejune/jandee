@@ -56,15 +56,12 @@ export default async function ChartPage({
         .filter(contrib => contrib) as Contrib[]
   )
 
+  const count = new Intl.NumberFormat().format(getContributionCount(graphEntries))
+
   return element === 'canvas' ? (
-    <Graph
-      data={graphEntries}
-      count={getContributionCount(graphEntries)}
-      username={username}
-      scheme={searchParams.scheme}
-    />
+    <Graph data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
   ) : (
-    <Chart data={graphEntries} scheme={searchParams.scheme} />
+    <Chart data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
   )
 }
 
