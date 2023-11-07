@@ -9,8 +9,8 @@ import type { Contrib } from './Chart'
 
 type ChartProps = {
   data: Contrib[][]
-  count: string
   username: string
+  count?: string
   options: {
     boxMargin?: number
     borderRadius?: number
@@ -37,7 +37,7 @@ const Canvas = ({
 }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-  const [url, setUrl] = useState('/empty.png')
+  const [url, setUrl] = useState(`/canvas-loading-${scheme}.png`)
   const [scale, setScale] = useState(1)
   const graphHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
   const height = graphHeight + canvasMargin + 5
@@ -99,8 +99,8 @@ const Canvas = ({
 
 interface Options {
   data: Contrib[][]
-  count: string
   username: string
+  count?: string
   boxMargin: number
   borderRadius?: number
   graphHeight: number
@@ -130,7 +130,7 @@ function drawGraph(
   ctx.fillStyle = getStyle('--color-text-default')
   ctx.font = `10px '${fontFace}'`
 
-  if (showFooter && username && count) {
+  if (showFooter && count) {
     ctx.fillText(
       `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
       canvasMargin,

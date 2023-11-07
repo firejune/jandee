@@ -1,5 +1,5 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 
 import format from 'date-fns/format'
 import startOfWeek from 'date-fns/startOfWeek'
@@ -12,8 +12,10 @@ import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 const FALSY = ['0', 'false', 'hide', 'hidden', 'none']
 const DATE_FORMAT = 'yyyy-MM-dd'
 import Chart, { Contrib } from './Chart'
+import Canvas from './Canvas'
 
 export default function ChartPage() {
+  const params = useParams()
   const searchParams = useSearchParams()
   const timeZone = searchParams.get('tz') || 'Asia/Seoul'
   const presentDate = new Date(new Date().toLocaleString('en', { timeZone }))
@@ -41,5 +43,13 @@ export default function ChartPage() {
     ...(searchParams.get('margin') ? { boxMargin: Number(searchParams.get('margin')) } : {}),
   }
 
-  return <Chart data={graphEntries} scheme={searchParams.get('scheme') as 'light' | 'dark'} options={options} />
+  const Element = params.element === 'canvas' ? Canvas : Chart
+  return (
+    <Element
+      data={graphEntries}
+      username={params.username as string}
+      scheme={searchParams.get('scheme') as 'light' | 'dark'}
+      options={options}
+    />
+  )
 }
