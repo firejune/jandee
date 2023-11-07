@@ -27,6 +27,19 @@ You can set the timezone.
 https://jandee.vercel.app/%USERNAME%?tz=America/New_York
 ```
 
+#### How to change style
+
+You can change the style of your graph. Supported properties include:
+
+- redias - Adjusts the border-redius value of the rectangular elements of the graph. default = 2
+- margin - Adjusts the margin value between the rectangular elements of the graph. default = 3
+- footer - You can hide the meta information shown at the bottom of the graph. default = false
+- weeks - You can hide the day information on the left side of the graph. default = false
+
+```
+https://jandee.vercel.app/%USERNAME%?redias=3&margin=2&footer=false&weeks=false
+```
+
 #### Drawing using canvas
 
 Basically, charts are created using SVG. You can use Canvas as an alternative. The difference from the SVG version is that it shows the total count and not the day of the week.
