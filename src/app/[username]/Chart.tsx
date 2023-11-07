@@ -21,11 +21,11 @@ const canvasMargin = 3
 const borderRadius = 2
 const textHeight = 13
 const textWidth = 28 + boxMargin
-const yearHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
+const chartHeight = textHeight + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = '10px'
 
 const Chart = ({ data = [], scheme }: ChartProps) => {
-  const height = yearHeight + canvasMargin * 2
+  const height = chartHeight + canvasMargin * 2
   const width = data.length * (boxSize + boxMargin) + canvasMargin + textWidth
   let lastCountedMonth = 0
 

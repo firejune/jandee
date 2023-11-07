@@ -7,7 +7,7 @@ import addDays from 'date-fns/addDays'
 import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Chart, { Contrib } from './Chart'
-import Canvas from './Canvas'
+import Graph from './Graph'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
 const HOST = process.env.API_HOST
@@ -57,7 +57,7 @@ export default async function ChartPage({
   )
 
   return element === 'canvas' ? (
-    <Canvas
+    <Graph
       data={graphEntries}
       count={getContributionCount(graphEntries)}
       username={username}

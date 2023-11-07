@@ -20,15 +20,15 @@ const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
 const canvasMargin = 2
 const borderRadius = 2
-const yearHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
+const graphHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
 const scaleFactor = 2
 
-const Canvas = ({ data, username, count, scheme }: ChartProps) => {
+const Graph = ({ data, username, count, scheme }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const [url, setUrl] = useState('/empty.png')
   const [scale, setScale] = useState(1)
-  const height = yearHeight + canvasMargin + 5
+  const height = graphHeight + canvasMargin + 5
   const width = data.length * (boxSize + boxMargin) + canvasMargin
   const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
 
@@ -106,20 +106,20 @@ function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontF
         count === 1 ? '' : 's'
       } in the last year by @${username} on GitHub`,
       canvasMargin,
-      yearHeight + 5
+      graphHeight + 5
     )
   }
 
   let themeGrades = 5
   const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
-  ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 55, yearHeight + 5)
-  ctx.fillText('More', width - canvasMargin - 25, yearHeight + 5)
+  ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 55, graphHeight + 5)
+  ctx.fillText('More', width - canvasMargin - 25, graphHeight + 5)
 
   for (let x = 0; x < 5; x += 1) {
     ctx.beginPath()
     ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
     ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-    ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 29, yearHeight - 7, 10, 10, 2)
+    ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 29, graphHeight - 7, 10, 10, 2)
     ctx.fill()
     ctx.stroke()
     themeGrades -= 1
@@ -159,4 +159,4 @@ function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontF
   }
 }
 
-export default Canvas
+export default Graph
