@@ -1,5 +1,3 @@
-'use client'
-
 import getMonth from 'date-fns/getMonth'
 import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
@@ -81,7 +79,7 @@ const Chart = ({
 
         <g transform={`translate(${textWidth}, 10)`}>
           {data.map((week, x) => {
-            const date = parseISO(week[0].date)
+            const date = parseISO(week[0]?.date)
             const month = getMonth(date) + 1
             const nextMonth = data[x + 1] ? getMonth(parseISO(data[x + 1][0].date)) + 1 : 0
             const firstMonthIsLast = x === 0 && month !== nextMonth

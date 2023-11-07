@@ -63,7 +63,7 @@ export default async function ChartPage({
           if (isAfter(pastDate, presentDate)) return null
           pastDate = addDays(pastDate, 1)
           // return { date, count: 0}
-          return getDateContrib(data, date)
+          return getDateContrib(data, date) || { date }
         })
         .filter(contrib => contrib) as Contrib[]
   )

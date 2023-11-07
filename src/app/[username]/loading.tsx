@@ -1,22 +1,45 @@
+'use client'
+import { useSearchParams } from 'next/navigation'
+
 import format from 'date-fns/format'
 import startOfWeek from 'date-fns/startOfWeek'
+import isAfter from 'date-fns/isAfter'
 import addMonths from 'date-fns/addMonths'
+import addWeeks from 'date-fns/addWeeks'
 import addDays from 'date-fns/addDays'
+import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
+const FALSY = ['0', 'false', 'hide', 'hidden', 'none']
 const DATE_FORMAT = 'yyyy-MM-dd'
-import Chart from './Chart'
+import Chart, { Contrib } from './Chart'
 
-export default async function ChartPage() {
-  const today = new Date()
-  const startDate = addMonths(today, -12)
-  let nextDate = startOfWeek(startDate)
+export default function ChartPage() {
+  const searchParams = useSearchParams()
+  const timeZone = searchParams.get('tz') || 'Asia/Seoul'
+  const presentDate = new Date(new Date().toLocaleString('en', { timeZone }))
+  let pastDate = startOfWeek(addMonths(presentDate, -12))
+  if (differenceInCalendarWeeks(presentDate, pastDate) > 52) {
+    pastDate = addWeeks(pastDate, 1)
+  }
 
-  const graphEntries = Array.from({ length: 53 }).map(() =>
-    Array.from({ length: 7 }).map(() => {
-      const date = format(nextDate, DATE_FORMAT)
-      nextDate = addDays(nextDate, 1)
-      return { date }
-    })
+  const graphEntries = Array.from({ length: 53 }).map(
+    () =>
+      Array.from({ length: 7 })
+        .map(() => {
+          const date = format(pastDate, DATE_FORMAT)
+          if (isAfter(pastDate, presentDate)) return null
+          pastDate = addDays(pastDate, 1)
+          return { date }
+        })
+        .filter(contrib => contrib) as Contrib[]
   )
-  return <Chart data={graphEntries} />
+
+  const options = {
+    ...(searchParams.get('weeks') ? { showWeekDays: !FALSY.includes(searchParams.get('weeks') as string) } : {}),
+    ...(searchParams.get('footer') ? { showFooter: !FALSY.includes(searchParams.get('footer') as string) } : {}),
+    ...(searchParams.get('radius') ? { borderRadius: Number(searchParams.get('radius')) } : {}),
+    ...(searchParams.get('margin') ? { boxMargin: Number(searchParams.get('margin')) } : {}),
+  }
+
+  return <Chart data={graphEntries} scheme={searchParams.get('scheme') as 'light' | 'dark'} options={options} />
 }
