@@ -9,10 +9,10 @@ export type Contrib = {
 }
 
 type ChartProps = {
+  data: Contrib[][]
+  username: string
   count?: string
-  username?: string
-  data?: Contrib[][]
-  options?: {
+  options: {
     boxMargin?: number
     borderRadius?: number
     showWeekDays?: boolean
@@ -70,7 +70,9 @@ const Chart = ({
                   fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
                   stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
                 >
-                  <title>{`${day.date || ''} / ${day.count || '0'}`}</title>
+                  <title>
+                    {`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${day.count || '0'}`}
+                  </title>
                 </rect>
               ))}
             </g>
@@ -116,7 +118,7 @@ const Chart = ({
           </g>
         )}
 
-        {showFooter && username && count && (
+        {showFooter && count && (
           <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
             <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
               {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
