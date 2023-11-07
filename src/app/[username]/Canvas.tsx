@@ -11,23 +11,35 @@ type ChartProps = {
   data: Contrib[][]
   count: string
   username: string
+  options: {
+    boxMargin?: number
+    borderRadius?: number
+    showWeekDays?: boolean
+    showFooter?: boolean
+  }
   scheme?: 'light' | 'dark'
 }
 
 const boxSize = 10
-const boxMargin = 2
 const textHeight = 15
 const defaultFontFace = 'IBM Plex Mono'
 const canvasMargin = 2
-const borderRadius = 2
-const graphHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
+const defaultBoxMargin = 2
+const defaultBorderRadius = 2
 const scaleFactor = 2
 
-const Graph = ({ data, username, count, scheme }: ChartProps) => {
+const Canvas = ({
+  data,
+  username,
+  count,
+  scheme,
+  options: { boxMargin = defaultBoxMargin, ...options } = {},
+}: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const [url, setUrl] = useState('/empty.png')
   const [scale, setScale] = useState(1)
+  const graphHeight = textHeight + (boxSize + boxMargin) * 8 + canvasMargin
   const height = graphHeight + canvasMargin + 5
   const width = data.length * (boxSize + boxMargin) + canvasMargin
   const handleResize = () => imgRef.current && setScale(imgRef.current.offsetWidth / width)
@@ -46,7 +58,7 @@ const Graph = ({ data, username, count, scheme }: ChartProps) => {
       ctx.scale(scaleFactor, scaleFactor)
       ctx.textBaseline = 'hanging'
 
-      drawGraph(ctx, { count, username, data })
+      drawGraph(ctx, { count, username, data, boxMargin, graphHeight, ...options })
       setUrl(canvas.toDataURL())
     }
 
@@ -86,21 +98,39 @@ const Graph = ({ data, username, count, scheme }: ChartProps) => {
 }
 
 interface Options {
+  data: Contrib[][]
   count: string
   username: string
-  data: Contrib[][]
+  boxMargin: number
+  borderRadius?: number
+  graphHeight: number
   fontFace?: string
   footerText?: string
+  showWeekDays?: boolean
+  showFooter?: boolean
 }
 
-function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontFace = defaultFontFace }: Options) {
+function drawGraph(
+  ctx: CanvasRenderingContext2D,
+  {
+    data,
+    count,
+    username,
+    boxMargin,
+    graphHeight,
+    fontFace = defaultFontFace,
+    borderRadius = defaultBorderRadius,
+    showWeekDays = true,
+    showFooter = true,
+  }: Options
+) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
 
   ctx.textBaseline = 'bottom'
   ctx.fillStyle = getStyle('--color-text-default')
   ctx.font = `10px '${fontFace}'`
 
-  if (username && count) {
+  if (showFooter && username && count) {
     ctx.fillText(
       `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
       canvasMargin,
@@ -108,19 +138,21 @@ function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontF
     )
   }
 
-  let themeGrades = 5
-  const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
-  ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 55, graphHeight + 5)
-  ctx.fillText('More', width - canvasMargin - 25, graphHeight + 5)
+  if (showFooter) {
+    let themeGrades = 5
+    const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
+    ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 55, graphHeight + 5)
+    ctx.fillText('More', width - canvasMargin - 25, graphHeight + 5)
 
-  for (let x = 0; x < 5; x += 1) {
-    ctx.beginPath()
-    ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
-    ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-    ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 29, graphHeight - 7, 10, 10, 2)
-    ctx.fill()
-    ctx.stroke()
-    themeGrades -= 1
+    for (let x = 0; x < 5; x += 1) {
+      ctx.beginPath()
+      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
+      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
+      ctx.roundRect(width - canvasMargin - (boxSize + boxMargin) * themeGrades - 29, graphHeight - 7, 10, 10, 2)
+      ctx.fill()
+      ctx.stroke()
+      themeGrades -= 1
+    }
   }
 
   for (let x = 0; x < data.length; x += 1) {
@@ -157,4 +189,4 @@ function drawGraph(ctx: CanvasRenderingContext2D, { count, username, data, fontF
   }
 }
 
-export default Graph
+export default Canvas

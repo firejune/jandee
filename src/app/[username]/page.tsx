@@ -7,9 +7,10 @@ import addDays from 'date-fns/addDays'
 import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks'
 
 import Chart, { Contrib } from './Chart'
-import Graph from './Graph'
+import Canvas from './Canvas'
 
 const DATE_FORMAT = 'yyyy-MM-dd'
+const FALSY = ['0', 'false', 'hide', 'hidden', 'none']
 const HOST = process.env.API_HOST
 
 type Year = {
@@ -27,8 +28,19 @@ type DataStruct = {
 }
 
 type PageProps = {
-  params: { username: string; element: 'svg' | 'canvas' }
-  searchParams: { scheme: 'light' | 'dark'; tz: string; v: string }
+  params: {
+    username: string
+    element: 'svg' | 'canvas'
+  }
+  searchParams: {
+    scheme: 'light' | 'dark'
+    radius: string
+    margin: string
+    footer: string
+    weeks: string
+    tz: string
+    v: string
+  }
 }
 
 export default async function ChartPage({
@@ -57,11 +69,16 @@ export default async function ChartPage({
   )
 
   const count = new Intl.NumberFormat().format(getContributionCount(graphEntries))
+  const options = {
+    ...(searchParams.weeks ? { showWeekDays: !FALSY.includes(searchParams.weeks) } : {}),
+    ...(searchParams.footer ? { showFooter: !FALSY.includes(searchParams.footer) } : {}),
+    ...(searchParams.radius ? { borderRadius: Number(searchParams.radius) } : {}),
+    ...(searchParams.margin ? { boxMargin: Number(searchParams.margin) } : {}),
+  }
 
-  return element === 'canvas' ? (
-    <Graph data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
-  ) : (
-    <Chart data={graphEntries} count={count} username={username} scheme={searchParams.scheme} />
+  const Element = element === 'canvas' ? Canvas : Chart
+  return (
+    <Element data={graphEntries} count={count} username={username} scheme={searchParams.scheme} options={options} />
   )
 }
 

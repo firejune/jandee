@@ -14,19 +14,37 @@ type ChartProps = {
   count?: string
   username?: string
   data?: Contrib[][]
+  options?: {
+    boxMargin?: number
+    borderRadius?: number
+    showWeekDays?: boolean
+    showFooter?: boolean
+  }
   scheme?: 'light' | 'dark'
 }
 
 const boxSize = 10
-const boxMargin = 3
 const canvasMargin = 3
-const borderRadius = 2
+const defaultBoxMargin = 3
+const defaultBorderRadius = 2
 const textHeight = 13
-const textWidth = 28 + boxMargin
-const chartHeight = textHeight * 2 + (boxSize + boxMargin) * 7 + canvasMargin
 const fontSize = '10px'
 
-const Chart = ({ data = [], username, count, scheme }: ChartProps) => {
+const Chart = ({
+  data = [],
+  username,
+  count,
+  scheme,
+  options: {
+    borderRadius = defaultBorderRadius,
+    boxMargin = defaultBoxMargin,
+    showWeekDays = true,
+    showFooter = true,
+  } = {},
+}: ChartProps) => {
+  const textWidth = showWeekDays ? 28 + boxMargin : 0
+  const footerHeight = showFooter ? textHeight + 2 : 0
+  const chartHeight = textHeight + footerHeight + (boxSize + boxMargin) * 7 + canvasMargin
   const height = chartHeight + canvasMargin * 2
   const width = data.length * (boxSize + boxMargin) + textWidth + canvasMargin
   let lastCountedMonth = 0
@@ -85,20 +103,22 @@ const Chart = ({ data = [], username, count, scheme }: ChartProps) => {
           })}
         </g>
 
-        <g transform={`translate(0, ${textHeight + boxMargin + 8})`}>
-          {data[0].map((day, y) => (
-            <text
-              key={`weekday-${y}`}
-              dy={y * textHeight}
-              fill="var(--color-text-default)"
-              style={y % 2 ? { fontSize } : { display: 'none' }}
-            >
-              {format(parseISO(day.date), 'EEE')}
-            </text>
-          ))}
-        </g>
+        {showWeekDays && (
+          <g transform={`translate(0, ${textHeight + boxMargin + 8})`}>
+            {data[0].map((day, y) => (
+              <text
+                key={`weekday-${y}`}
+                dy={y * textHeight}
+                fill="var(--color-text-default)"
+                style={y % 2 ? { fontSize } : { display: 'none' }}
+              >
+                {format(parseISO(day.date), 'EEE')}
+              </text>
+            ))}
+          </g>
+        )}
 
-        {username && count && (
+        {showFooter && username && count && (
           <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
             <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
               {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
@@ -106,39 +126,41 @@ const Chart = ({ data = [], username, count, scheme }: ChartProps) => {
           </g>
         )}
 
-        <g
-          transform={`translate(${data.length * (boxSize + boxMargin) - 93}, ${
-            chartHeight - textHeight - canvasMargin
-          })`}
-        >
-          <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
-            Less
-          </text>
-          <g transform={`translate(${textWidth - 2}, ${boxMargin + 2})`}>
-            {Array.from({ length: 5 }).map((_, intensity) => (
-              <rect
-                key={`regend-${intensity}`}
-                width={boxSize}
-                height={boxSize}
-                x={(boxSize + boxMargin) * intensity}
-                rx={borderRadius}
-                ry={borderRadius}
-                fill={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}bg)`}
-                stroke={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}border)`}
-              >
-                <title>i</title>
-              </rect>
-            ))}
-          </g>
-          <text
-            dx={textWidth + (boxSize + boxMargin) * 5}
-            dy={textHeight}
-            style={{ fontSize }}
-            fill="var(--color-text-default)"
+        {showFooter && (
+          <g
+            transform={`translate(${data.length * (boxSize + boxMargin) + textWidth - 124}, ${
+              chartHeight - footerHeight - canvasMargin
+            })`}
           >
-            More
-          </text>
-        </g>
+            <text dy={footerHeight} style={{ fontSize }} fill="var(--color-text-default)">
+              Less
+            </text>
+            <g transform={`translate(28, ${footerHeight - 9})`}>
+              {Array.from({ length: 5 }).map((_, intensity) => (
+                <rect
+                  key={`regend-${intensity}`}
+                  width={boxSize}
+                  height={boxSize}
+                  x={(boxSize + boxMargin) * intensity}
+                  rx={borderRadius}
+                  ry={borderRadius}
+                  fill={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}bg)`}
+                  stroke={`var(--color-calendar-graph-day-${intensity ? `L${intensity}-` : ''}border)`}
+                >
+                  <title>i</title>
+                </rect>
+              ))}
+            </g>
+            <text
+              dx={30 + (boxSize + boxMargin) * 5}
+              dy={footerHeight}
+              style={{ fontSize }}
+              fill="var(--color-text-default)"
+            >
+              More
+            </text>
+          </g>
+        )}
       </g>
     </svg>
   )
