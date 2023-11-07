@@ -22,10 +22,10 @@ type ChartProps = {
 }
 
 const boxSize = 10
-const canvasMargin = 3
+const canvasMargin = 2
 const defaultBoxMargin = 3
 const defaultBorderRadius = 2
-const textHeight = 13
+const textHeight = 15
 const fontSize = '10px'
 
 const Chart = ({
@@ -41,7 +41,7 @@ const Chart = ({
   } = {},
 }: ChartProps) => {
   const textWidth = showWeekDays ? 28 + boxMargin : 0
-  const footerHeight = showFooter ? textHeight + 2 : 0
+  const footerHeight = showFooter ? textHeight : 0
   const chartHeight = textHeight + footerHeight + (boxSize + boxMargin) * 7 + canvasMargin
   const height = chartHeight + canvasMargin * 2
   const width = data.length * (boxSize + boxMargin) + textWidth + canvasMargin
@@ -56,7 +56,7 @@ const Chart = ({
       style={{ background: 'transparent' }}
     >
       <g transform={`translate(${canvasMargin}, ${canvasMargin})`}>
-        <g transform={`translate(${textWidth}, ${textHeight + boxMargin})`}>
+        <g transform={`translate(${textWidth}, ${textHeight})`}>
           {data.map((week, x) => (
             <g key={`week-${x}`} transform={`translate(${(boxSize + boxMargin) * x}, 0)`}>
               {week.map((day, y) => (
@@ -104,11 +104,11 @@ const Chart = ({
         </g>
 
         {showWeekDays && (
-          <g transform={`translate(0, ${textHeight + boxMargin + 8})`}>
+          <g transform={`translate(0, ${textHeight + 8})`}>
             {data[0].map((day, y) => (
               <text
                 key={`weekday-${y}`}
-                dy={y * textHeight}
+                dy={(boxSize + boxMargin) * y}
                 fill="var(--color-text-default)"
                 style={y % 2 ? { fontSize } : { display: 'none' }}
               >
