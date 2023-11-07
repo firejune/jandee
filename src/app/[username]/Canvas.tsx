@@ -5,25 +5,12 @@ import format from 'date-fns/format'
 import getMonth from 'date-fns/getMonth'
 import parseISO from 'date-fns/parseISO'
 
-import type { Contrib } from './Chart'
-
-type ChartProps = {
-  data: Contrib[][]
-  username: string
-  count?: string
-  options: {
-    boxMargin?: number
-    borderRadius?: number
-    showWeekDays?: boolean
-    showFooter?: boolean
-  }
-  scheme?: 'light' | 'dark'
-}
+import type { Contrib, ChartProps } from './Chart'
 
 const boxSize = 10
 const textHeight = 15
 const canvasMargin = 2
-const defaultBoxMargin = 2
+const defaultBoxMargin = 3
 const defaultBorderRadius = 2
 const scaleFactor = 3
 

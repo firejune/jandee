@@ -8,7 +8,7 @@ export type Contrib = {
   intensity?: string
 }
 
-type ChartProps = {
+export type ChartProps = {
   data: Contrib[][]
   username: string
   count?: string
@@ -22,10 +22,10 @@ type ChartProps = {
 }
 
 const boxSize = 10
+const textHeight = 15
 const canvasMargin = 2
 const defaultBoxMargin = 3
 const defaultBorderRadius = 2
-const textHeight = 15
 const fontSize = '10px'
 
 const Chart = ({
