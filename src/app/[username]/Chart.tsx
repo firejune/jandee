@@ -60,20 +60,27 @@ const Chart = ({
           {data.map((week, x) => (
             <g key={`week-${x}`} transform={`translate(${(boxSize + boxMargin) * x}, 0)`}>
               {week.map((day, y) => (
-                <rect
+                <a
                   key={`day-${y}`}
-                  width={boxSize}
-                  height={boxSize}
-                  y={(boxSize + boxMargin) * y}
-                  rx={borderRadius}
-                  ry={borderRadius}
-                  fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
-                  stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
+                  href={`https://github.com/${username}?from=${day.date}&to=${day.date}&tab=overview`}
+                  target="github.com"
                 >
-                  <title>
-                    {`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${day.count || '0'}`}
-                  </title>
-                </rect>
+                  <rect
+                    width={boxSize}
+                    height={boxSize}
+                    y={(boxSize + boxMargin) * y}
+                    rx={borderRadius}
+                    ry={borderRadius}
+                    fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
+                    stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
+                  >
+                    <title>
+                      {`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${
+                        day.count || '0'
+                      }`}
+                    </title>
+                  </rect>
+                </a>
               ))}
             </g>
           ))}
