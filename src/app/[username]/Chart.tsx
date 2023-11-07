@@ -48,13 +48,7 @@ const Chart = ({
   let lastCountedMonth = 0
 
   return (
-    <svg
-      data-color-mode={scheme}
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      style={{ background: 'transparent' }}
-    >
+    <svg data-color-mode={scheme} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       <g transform={`translate(${canvasMargin}, ${canvasMargin})`}>
         <g transform={`translate(${textWidth}, ${textHeight})`}>
           {data.map((week, x) => (
