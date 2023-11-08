@@ -57,7 +57,7 @@ const Chart = ({
                 <a
                   key={`day-${y}`}
                   href={`https://github.com/${username}?from=${day.date}&to=${day.date}&tab=overview`}
-                  target="github.com"
+                  target="jandee"
                 >
                   <rect
                     width={boxSize}
@@ -121,9 +121,11 @@ const Chart = ({
 
         {showFooter && count && (
           <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
-            <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
-              {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
-            </text>
+            <a href={`https://jandee.vercel.app/${username}`} target="jandee">
+              <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
+                {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
+              </text>
+            </a>
           </g>
         )}
 
