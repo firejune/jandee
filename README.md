@@ -1,17 +1,17 @@
-## Notion Github Embed
+## Jandee
 
-This is a simple project that lets you embed a GitHub user's contribution chart in a Notion document.
+Jandee is a simple project that lets you embed a GitHub user's contribution calendar into any document.
 
-### How to use this?
+### How to use This in Notion?
 
-1. Create a new Embed block in your Notion doc.
+1. Create a new Embed block in your any document.
 2. Set the Embed URL to `https://jandee.vercel.app/%USERNAME%` replacing `%USERNAME%` with your GitHub username.
 3. Adjust the size of the embed accordingly.
 4. Bask in its glory!
 
 ![glory](https://i.imgur.com/aU95o4N.png)
 
-#### How to change color mode
+### How to change color mode
 
 You can change the color using the `scheme` parameter. Values include `light` and `dark`. If the parameter is not used, it is automatically selected by the system.
 
@@ -19,15 +19,15 @@ You can change the color using the `scheme` parameter. Values include `light` an
 https://jandee.vercel.app/%USERNAME%?scheme=dark
 ```
 
-#### How to change time zone
+### Can I change the Time Zone?
 
-You can set the timezone.
+Yes, You can set the specific Time Zone. If the Time Zone is not set, it operates as UTC+0.
 
 ```
 https://jandee.vercel.app/%USERNAME%?tz=America/New_York
 ```
 
-#### How to change style
+### How to customize chart style?
 
 You can change the style of your graph. Supported properties include:
 
@@ -40,15 +40,15 @@ You can change the style of your graph. Supported properties include:
 https://jandee.vercel.app/%USERNAME%?redias=3&margin=2&footer=false&weeks=false
 ```
 
-#### How to export to PNG image
+### How to export to PNG image
 
-Basically, charts are created using SVG image. You can use PNG as an alternative. However, PNG images may have slightly different fonts.
+You can use Canvas with Embed method as an alternative. This Canvas can be saved as PNG images with transparency. However, depending on the system, the font shape or size may vary slightly.
 
 ```
 https://jandee.vercel.app/%USERNAME%/canvas
 ```
 
-#### Credit
+### Credit
 
 This project was inspired by the following project::
 
