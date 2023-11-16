@@ -8,7 +8,7 @@ type Params = {
 }
 
 export async function GET(request: NextRequest, { params }: Params) {
-  console.log('GET', params.username)
+  console.log('GET', `/api/v1/${params.username}`)
 
   const data = await fetch(`https://github.com/${params.username}`)
   const $ = load(await data.text())
