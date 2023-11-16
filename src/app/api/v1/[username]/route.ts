@@ -10,8 +10,9 @@ type Params = {
 export async function GET(request: NextRequest, { params }: Params) {
   console.log('GET', `/api/v1/${params.username}`)
 
-  const data = await fetch(`https://github.com/${params.username}`)
-  const $ = load(await data.text())
+  const data = await fetch(`https://github.com/users/${params.username}/contributions`)
+  const text = await data.text()
+  const $ = load(text)
   const $days = $('table.ContributionCalendar-grid td.ContributionCalendar-day')
   const contribText = $('.js-yearly-contributions h2')
     .text()
@@ -36,7 +37,13 @@ export async function GET(request: NextRequest, { params }: Params) {
         const date = dateAttr.split('-').map(d => parseInt(d, 10))
         const value = {
           date: dateAttr,
-          count: Number($day.text().split(' ')[0]) || 0,
+          count:
+            parseInt(
+              $(`tool-tip[for=${$day.attr('id')}]`)
+                .text()
+                .split(' ')[0],
+              10,
+            ) || 0,
           intensity: Number($day.attr('data-level')) || 0,
         }
         return { date, value }
