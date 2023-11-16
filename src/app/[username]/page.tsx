@@ -13,18 +13,10 @@ const DATE_FORMAT = 'yyyy-MM-dd'
 const FALSY = ['0', 'false', 'hide', 'hidden', 'none']
 const HOST = process.env.API_HOST
 
-type Year = {
-  year: string
-  total: number
-  range: {
-    start: string
-    end: string
-  }
-}
-
 type DataStruct = {
+  total: number
+  range: { start: string; end: string }
   contributions: Contrib[]
-  years: Year[]
 }
 
 type PageProps = {
@@ -65,10 +57,10 @@ export default async function ChartPage({
           // return { date, count: 0}
           return getDateContrib(data, date) || { date }
         })
-        .filter(contrib => contrib) as Contrib[]
+        .filter(contrib => contrib) as Contrib[],
   )
 
-  const count = new Intl.NumberFormat().format(getContributionCount(graphEntries))
+  const count = new Intl.NumberFormat().format(data.total)
   const options = {
     ...(searchParams.weeks ? { showWeekDays: !FALSY.includes(searchParams.weeks) } : {}),
     ...(searchParams.footer ? { showFooter: !FALSY.includes(searchParams.footer) } : {}),
@@ -93,10 +85,4 @@ async function getData<T>(url: string): Promise<{ data: T }> {
 
 function getDateContrib(data: DataStruct, date: string) {
   return data.contributions.find(contrib => contrib.date === date)
-}
-
-function getContributionCount(graphEntries: Contrib[][]) {
-  return graphEntries.reduce((rowTotal, row) => {
-    return rowTotal + row.reduce((colTotal, col) => colTotal + (col.count || 0), 0)
-  }, 0)
 }

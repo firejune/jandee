@@ -115,65 +115,23 @@ function drawGraph(
     borderRadius = defaultBorderRadius,
     showWeekDays,
     showFooter,
-  }: Options
+  }: Options,
 ) {
   const getStyle = (value: string) => getComputedStyle(ctx.canvas).getPropertyValue(value)
   ctx.font = `10px '${getStyle('font-family')}'`
-
-  if (showFooter) {
-    ctx.fillStyle = getStyle('--color-text-default')
-    if (count) {
-      ctx.fillText(
-        `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
-        canvasMargin + textWidth,
-        graphHeight + 7
-      )
-    }
-    let themeGrades = 5
-    const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
-    ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 62 + textWidth, graphHeight + 6)
-    ctx.fillText('More', width - canvasMargin - 32 + textWidth, graphHeight + 6)
-
-    for (let x = 0; x < 5; x += 1) {
-      ctx.beginPath()
-      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
-      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
-      ctx.roundRect(
-        width - canvasMargin - (boxSize + boxMargin) * themeGrades - 36 + textWidth,
-        graphHeight - 6,
-        boxSize,
-        boxSize,
-        borderRadius
-      )
-      ctx.fill()
-      ctx.stroke()
-      themeGrades -= 1
-    }
-  }
-
-  if (showWeekDays) {
-    for (let y = 0; y < data[0].length; y += 1) {
-      if (y % 2)
-        ctx.fillText(
-          format(parseISO(data[0][y].date), 'EEE'),
-          canvasMargin,
-          canvasMargin + textHeight * 2 + (boxSize + boxMargin) * y - 4
-        )
-    }
-  }
 
   for (let x = 0; x < data.length; x += 1) {
     for (let y = 0; y < data[x].length; y += 1) {
       const day = data[x][y]
       ctx.beginPath()
-      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border`)
-      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg`)
+      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${day.intensity ? `L${day.intensity}-` : ''}border`)
+      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${day.intensity ? `L${day.intensity}-` : ''}bg`)
       ctx.roundRect(
         canvasMargin + textWidth + (boxSize + boxMargin) * x,
         canvasMargin + textHeight + (boxSize + boxMargin) * y,
         boxSize,
         boxSize,
-        borderRadius
+        borderRadius,
       )
       ctx.fill()
       ctx.stroke()
@@ -192,9 +150,50 @@ function drawGraph(
       ctx.fillText(
         format(date, 'MMM'),
         canvasMargin + textWidth + (boxSize + boxMargin) * x,
-        textHeight + canvasMargin - 2
+        textHeight + canvasMargin - 2,
       )
       lastCountedMonth = month
+    }
+  }
+
+  if (showWeekDays) {
+    for (let y = 0; y < data[0].length; y += 1) {
+      if (y % 2)
+        ctx.fillText(
+          format(parseISO(data[0][y].date), 'EEE'),
+          canvasMargin,
+          canvasMargin + textHeight * 2 + (boxSize + boxMargin) * y - 4,
+        )
+    }
+  }
+
+  if (showFooter) {
+    if (count) {
+      ctx.fillText(
+        `${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`,
+        canvasMargin + textWidth,
+        graphHeight + 7,
+      )
+    }
+    let themeGrades = 5
+    const width = data.length * (boxSize + boxMargin) + canvasMargin * 2
+    ctx.fillText('Less', width - canvasMargin - (boxSize + boxMargin) * themeGrades - 62 + textWidth, graphHeight + 6)
+    ctx.fillText('More', width - canvasMargin - 32 + textWidth, graphHeight + 6)
+
+    for (let x = 0; x < 5; x += 1) {
+      ctx.beginPath()
+      ctx.strokeStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}border`)
+      ctx.fillStyle = getStyle(`--color-calendar-graph-day-${x ? `L${x}-` : ''}bg`)
+      ctx.roundRect(
+        width - canvasMargin - (boxSize + boxMargin) * themeGrades - 36 + textWidth,
+        graphHeight - 6,
+        boxSize,
+        boxSize,
+        borderRadius,
+      )
+      ctx.fill()
+      ctx.stroke()
+      themeGrades -= 1
     }
   }
 }

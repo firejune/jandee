@@ -5,7 +5,7 @@ import format from 'date-fns/format'
 export type Contrib = {
   date: string
   count?: number
-  intensity?: string
+  intensity?: number
 }
 
 export type ChartProps = {
@@ -65,8 +65,8 @@ const Chart = ({
                     y={(boxSize + boxMargin) * y}
                     rx={borderRadius}
                     ry={borderRadius}
-                    fill={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}bg)`}
-                    stroke={`var(--color-calendar-graph-day-${day.count ? `L${day.intensity}-` : ''}border)`}
+                    fill={`var(--color-calendar-graph-day-${day.intensity ? `L${day.intensity}-` : ''}bg)`}
+                    stroke={`var(--color-calendar-graph-day-${day.intensity ? `L${day.intensity}-` : ''}border)`}
                   >
                     <title>
                       {`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${
