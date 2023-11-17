@@ -8,22 +8,23 @@ type Params = {
 }
 
 export async function GET(request: NextRequest, { params }: Params) {
-  console.log('GET', `/api/v1/${params.username}`)
+  const v = request.nextUrl.searchParams.get('v')
+  console.log('GET', `/api/v1/${params.username}${v ? `?v=${v}` : ''}`)
 
-  const data = await fetch(`https://github.com/users/${params.username}/contributions`)
+  const data = await fetch(`https://github.com/users/${params.username}/contributions${v ? `?v=${v}` : ''}`)
   const $ = load(await data.text())
   const $days = $('table.ContributionCalendar-grid td.ContributionCalendar-day')
+  const $graph = $('div.js-calendar-graph').get(0)
   const contribText = $('.js-yearly-contributions h2')
     .text()
     .trim()
     .match(/^([0-9,]+)\s/)
   const contribCount = contribText ? parseInt(contribText[0].replace(/,/g, ''), 10) : 0
-
   const struct = {
     total: contribCount,
     range: {
-      start: $($days.get(0)).attr('data-date') as string,
-      end: $($days.get($days.length - 1)).attr('data-date') as string,
+      start: $($graph).attr('data-from') as string,
+      end: $($graph).attr('data-to') as string,
     },
     contributions: (() => {
       const parseDay = (day: Element) => {
@@ -38,7 +39,14 @@ export async function GET(request: NextRequest, { params }: Params) {
         }
         return { date, value }
       }
-      return $days.get().map(day => parseDay(day).value)
+      return $days
+        .get()
+        .map(day => parseDay(day).value)
+        .sort((a, b) => {
+          if (a.date < b.date) return 1
+          else if (a.date > b.date) return -1
+          return 0
+        })
     })(),
   }
 
