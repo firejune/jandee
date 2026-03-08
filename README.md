@@ -31,13 +31,13 @@ https://jandee.vercel.app/%USERNAME%?tz=America/New_York
 
 You can change the style of your graph. Supported properties include:
 
-- `redias` - Adjusts the border-redius value of the rectangular elements of the graph. default = 2
+- `radius` - Adjusts the border-radius value of the rectangular elements of the graph. default = 2
 - `margin` - Adjusts the margin value between the rectangular elements of the graph. default = 3
 - `footer` - You can hide the meta information shown at the bottom of the graph. default = false
 - `weeks` - You can hide the day information on the left side of the graph. default = false
 
 ```
-https://jandee.vercel.app/%USERNAME%?redias=3&margin=2&footer=false&weeks=false
+https://jandee.vercel.app/%USERNAME%?radius=3&margin=2&footer=false&weeks=false
 ```
 
 ### How to export to PNG image
