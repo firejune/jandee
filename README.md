@@ -33,8 +33,8 @@ You can change the style of your graph. Supported properties include:
 
 - `radius` - Adjusts the border-radius value of the rectangular elements of the graph. default = 2
 - `margin` - Adjusts the margin value between the rectangular elements of the graph. default = 3
-- `footer` - You can hide the meta information shown at the bottom of the graph. default = false
-- `weeks` - You can hide the day information on the left side of the graph. default = false
+- `footer` - You can hide the meta information shown at the bottom of the graph. default = true
+- `weeks` - You can hide the day information on the left side of the graph. default = true
 
 ```
 https://jandee.vercel.app/%USERNAME%?radius=3&margin=2&footer=false&weeks=false
