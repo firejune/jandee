@@ -69,8 +69,12 @@ export default async function ChartPage({
   }
 
   const Element = element === 'canvas' ? Canvas : Chart
+  const scheme = searchParams.scheme
   return (
-    <Element data={graphEntries} count={count} username={username} scheme={searchParams.scheme} options={options} />
+    <>
+      {scheme && <style>{`body{background-color:${scheme === 'dark' ? '#191919' : '#fff'}}`}</style>}
+      <Element data={graphEntries} count={count} username={username} scheme={scheme} options={options} />
+    </>
   )
 }
 
