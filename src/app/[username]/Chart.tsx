@@ -138,7 +138,7 @@ const Chart = ({
 
         {showFooter && count && (
           <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
-            <a href={`https://jandee.vercel.app/${username}${stringifiedParams}`} target="jandee">
+            <a href={`https://jandi.firejune.io/${username}${stringifiedParams}`} target="jandee">
               <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
                 {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
               </text>

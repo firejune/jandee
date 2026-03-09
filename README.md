@@ -5,7 +5,7 @@ Jandee is a simple project that lets you embed a GitHub user's contribution cale
 ### How to use This in Notion?
 
 1. Create a new Embed block in your any document.
-2. Set the Embed URL to `https://jandee.vercel.app/%USERNAME%` replacing `%USERNAME%` with your GitHub username.
+2. Set the Embed URL to `https://jandi.firejune.io/%USERNAME%` replacing `%USERNAME%` with your GitHub username.
 3. Adjust the size of the embed accordingly.
 4. Bask in its glory!
 
@@ -16,7 +16,7 @@ Jandee is a simple project that lets you embed a GitHub user's contribution cale
 You can change the color using the `scheme` parameter. Values include `light` and `dark`. If the parameter is not used, it is automatically selected by the system.
 
 ```
-https://jandee.vercel.app/%USERNAME%?scheme=dark
+https://jandi.firejune.io/%USERNAME%?scheme=dark
 ```
 
 ### Can I change the Time Zone?
@@ -24,7 +24,7 @@ https://jandee.vercel.app/%USERNAME%?scheme=dark
 Yes, You can set the specific Time Zone. If the Time Zone is not set, it operates as UTC+0.
 
 ```
-https://jandee.vercel.app/%USERNAME%?tz=America/New_York
+https://jandi.firejune.io/%USERNAME%?tz=America/New_York
 ```
 
 ### How to customize chart style?
@@ -37,7 +37,7 @@ You can change the style of your graph. Supported properties include:
 - `weeks` - You can hide the day information on the left side of the graph. default = true
 
 ```
-https://jandee.vercel.app/%USERNAME%?radius=3&margin=2&footer=false&weeks=false
+https://jandi.firejune.io/%USERNAME%?radius=3&margin=2&footer=false&weeks=false
 ```
 
 ### How to export to PNG image
@@ -45,7 +45,7 @@ https://jandee.vercel.app/%USERNAME%?radius=3&margin=2&footer=false&weeks=false
 You can use Canvas with Embed method as an alternative. This Canvas can be saved as PNG images with transparency. However, depending on the system, the font shape or size may vary slightly.
 
 ```
-https://jandee.vercel.app/%USERNAME%/canvas
+https://jandi.firejune.io/%USERNAME%/canvas
 ```
 
 ### Credit
