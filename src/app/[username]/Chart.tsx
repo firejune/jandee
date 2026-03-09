@@ -74,7 +74,7 @@ const Chart = ({
                 <a
                   key={`day-${y}`}
                   href={`https://github.com/${username}?from=${day.date}&to=${day.date}&tab=overview`}
-                  target="jandee"
+                  target="jandi"
                 >
                   <rect
                     width={boxSize}
@@ -138,7 +138,7 @@ const Chart = ({
 
         {showFooter && count && (
           <g transform={`translate(${textWidth}, ${chartHeight - textHeight})`}>
-            <a href={`https://jandi.firejune.io/${username}${stringifiedParams}`} target="jandee">
+            <a href={`https://jandi.firejune.io/${username}${stringifiedParams}`} target="jandi">
               <text dy={textHeight} style={{ fontSize }} fill="var(--color-text-default)">
                 {`${count} contribution${count === '1' ? '' : 's'} in the last year by @${username} on GitHub`}
               </text>

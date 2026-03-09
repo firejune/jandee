@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 
 export const metadata = {
-  title: 'Jandee',
+  title: 'Jandi',
   description: 'Embed a GitHub contribution chart into any Notion document.',
 }
 

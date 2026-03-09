@@ -74,7 +74,7 @@ const Canvas = ({
                 <area
                   key={y}
                   href={`https://github.com/${username}?from=${day.date}&to=${day.date}&tab=overview`}
-                  target="jandee"
+                  target="jandi"
                   shape="rect"
                   coords={`${starts.join(',')}, ${ends.join(',')}`}
                   title={`${day.date}${showWeekDays ? '' : `(${format(parseISO(day.date), 'EEE')})`} / ${
