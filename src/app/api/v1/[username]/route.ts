@@ -7,11 +7,11 @@ type Params = {
   }
 }
 
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, { params: { username } }: Params) {
   const v = request.nextUrl.searchParams.get('v')
-  console.log('GET', `/api/v1/${params.username}${v ? `?v=${v}` : ''}`)
+  console.log('GET', `/api/v1/${username}${v ? `?v=${v}` : ''}`)
 
-  const data = await fetch(`https://github.com/users/${params.username}/contributions${v ? `?v=${v}` : ''}`)
+  const data = await fetch(`https://github.com/users/${username}/contributions${v ? `?v=${v}` : ''}`)
   const $ = load(await data.text())
   const $days = $('table.ContributionCalendar-grid td.ContributionCalendar-day')
   const $graph = $('div.js-calendar-graph').get(0)
